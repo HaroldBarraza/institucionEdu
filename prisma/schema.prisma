@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model especialidades{
+  id_especialidad Int @id @default(autoincrement())
+  name_especialidad String @unique
+  descripcion_especialidad String
+  users users[]
+  @@map("especialidades")
+}
+
+enum role{
+  RECEPCIONISTA
+  MEDICO
+  GERENCIA
+}
+
+model users{
+  id_empleado Int @id @default(autoincrement())
+  name_empleado String
+  appaterno String
+  appmaterno String
+  telefono String
+  email String @unique
+  password String
+  role role 
+  id_especialidad Int?
+  especialidades especialidades? @relation(fields: [id_especialidad], references: [id_especialidad])
+  citas_medico citas[] @relation("medico_citas")
+  citas_creador citas[] @relation("creador_citas")
+  @@map("users")
+  
+}
+
+enum genero{
+  MASCULINO
+  FEMENINO
+}
+
+model pacientes{
+  id_paciente Int @id @default(autoincrement())
+  name_paciente String
+  appaterno_paciente String
+  apmaterno_paciente String
+  telefono String
+  email String
+  fecha_nacimiento DateTime @db.Date
+  genero genero
+  fecha_registro DateTime @default(now())
+  citas citas[]
+  @@map("pacientes")
+  
+}
+
+enum estado{
+  PROGRAMADA
+  COMPLETADA
+  CANCELADA
+}
+
+model estado_citas{
+  id_estado Int @id @default(autoincrement())
+  name_estado estado
+  descripcion String
+  citas citas[]
+  @@map("estado_citas")
+}
+
+model citas {
+  id_cita Int @id @default(autoincrement())
+  id_paciente Int
+  pacientes pacientes @relation(fields: [id_paciente], references: [id_paciente])
+  descripcion String @default("no hay descripcion")
+  id_medico Int
+  medico users @relation("medico_citas" ,fields: [id_medico], references: [id_empleado])
+  id_estado Int @default(1)
+  estado estado_citas @relation(fields: [id_estado], references: [id_estado])
+  fecha_creacion DateTime @db.Date @default(now())
+  fecha_de_cita DateTime @db.Date @default(now())
+  hora_de_cita DateTime @db.Time(0) @default(now())
+  creado_por Int
+  users users @relation("creador_citas" ,fields: [creado_por], references: [id_empleado])
+  @@map("citas")
+
+}
+ 
