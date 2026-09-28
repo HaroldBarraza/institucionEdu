@@ -5,93 +5,274 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "./generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model especialidades{
-  id_especialidad Int @id @default(autoincrement())
-  name_especialidad String @unique
-  descripcion_especialidad String
-  users users[]
-  @@map("especialidades")
-}
-
-enum role{
+enum Role {
+  ADMINISTRADOR
   RECEPCIONISTA
-  MEDICO
-  GERENCIA
+  ESTUDIANTE
+  PROFESOR
 }
 
-model users{
-  id_empleado Int @id @default(autoincrement())
-  name_empleado String
-  appaterno String
-  appmaterno String
-  telefono String
-  email String @unique
-  password String
-  role role 
-  id_especialidad Int?
-  especialidades especialidades? @relation(fields: [id_especialidad], references: [id_especialidad])
-  citas_medico citas[] @relation("medico_citas")
-  citas_creador citas[] @relation("creador_citas")
-  @@map("users")
-  
+enum EstadoUsuario {
+  PENDIENTE_APROBACION
+  ACTIVO
+  SUSPENDIDO_MORA
+  INACTIVO
 }
 
-enum genero{
-  MASCULINO
-  FEMENINO
+enum Dias {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+}
+enum EstadoGrupo {
+  ABIERTO
+  CANCELADO
+  CERRADO
 }
 
-model pacientes{
-  id_paciente Int @id @default(autoincrement())
-  name_paciente String
-  appaterno_paciente String
-  apmaterno_paciente String
-  telefono String
-  email String
-  fecha_nacimiento DateTime @db.Date
-  genero genero
-  fecha_registro DateTime @default(now())
-  citas citas[]
-  @@map("pacientes")
-  
+enum RazonPago {
+  MATRICULA
+  MENSUALIDAD
+  OTRO
 }
 
-enum estado{
-  PROGRAMADA
-  COMPLETADA
+enum EstadoDeuda {
+  PENDIENTE
+  PAGADO
   CANCELADA
+  VENCIDO
 }
-
-model estado_citas{
-  id_estado Int @id @default(autoincrement())
-  name_estado estado
-  descripcion String
-  citas citas[]
-  @@map("estado_citas")
+enum MetodoPago {
+  TRANSFERENCIA
+  CAJA
+  PASARELA_EN_LINEA
 }
-
-model citas {
-  id_cita Int @id @default(autoincrement())
-  id_paciente Int
-  pacientes pacientes @relation(fields: [id_paciente], references: [id_paciente])
-  descripcion String @default("no hay descripcion")
-  id_medico Int
-  medico users @relation("medico_citas" ,fields: [id_medico], references: [id_empleado])
-  id_estado Int @default(1)
-  estado estado_citas @relation(fields: [id_estado], references: [id_estado])
-  fecha_creacion DateTime @db.Date @default(now())
-  fecha_de_cita DateTime @db.Date @default(now())
-  hora_de_cita DateTime @db.Time(0) @default(now())
-  creado_por Int
-  users users @relation("creador_citas" ,fields: [creado_por], references: [id_empleado])
-  @@map("citas")
-
+enum EstadoInscripcion {
+  INSCRITO
+  RETIRADO
 }
+ enum EstadoPeriodo {
+  PREPARADO
+  ACTIVO
+  CERRADO
+ }
+ enum EstadoPago {
+  ACEPTADO
+  RECHAZADO
+  PENDIENTE
+ }
  
+model Usuario {
+  id_usuario     Int           @id @default(autoincrement())
+  email          String        @unique
+  password       String
+  nombre         String
+  appaterno      String
+  apmaterno      String
+  telefono       String
+  rol            Role
+  estado         EstadoUsuario @default(PENDIENTE_APROBACION)
+  fecha_creacion DateTime      @default(now())
+  fecha_update   DateTime      @updatedAt
+
+  docente          Docente?
+  estudiante       Estudiante?
+  pagosVerificados Pago[] @relation("PagoVerificadoPor")
+}
+
+model Tutor {
+  id_tutor  Int     @id @default(autoincrement())
+  email     String @unique
+  nombre    String
+  appaterno String
+  apmaterno String
+  telefono  String
+
+  estudiantes Estudiante[]
+}
+
+model Docente {
+  id_docente      Int      @id
+  especialidad_id Int
+  fechaContrato   DateTime
+
+  usuario             Usuario      @relation(fields: [id_docente], references: [id_usuario])
+  especialidad        Especialidad @relation(fields: [especialidad_id], references: [id_especialidad])
+  grupos              Grupo[]
+  asignaciones        Asignacion[]
+  entregasCalificadas Entrega[]
+}
+
+model Estudiante {
+  id_estudiante    Int    @id
+  codigo_matricula String @unique
+  tutor_id         Int?   
+
+  usuario       Usuario                 @relation(fields: [id_estudiante], references: [id_usuario])
+  tutor         Tutor?                  @relation(fields: [tutor_id], references: [id_tutor])
+  inscripciones Inscripcion[]
+  obligaciones  ObligacionFinanciera[]
+  entregas      Entrega[]
+}
+
+model Especialidad {
+  id_especialidad Int     @id @default(autoincrement())
+  nombre          String @unique
+  descripcion     String?
+
+  docentes Docente[]
+  materias Materia[]
+}
+
+model Materia {
+  id_materia        Int     @id @default(autoincrement())
+  nombre            String
+  creditos          Int
+  costo_inscripcion Decimal @db.Decimal(10, 2)
+  costo_mensualidad Decimal @db.Decimal(10, 2)
+  especialidad_id   Int?
+
+  especialidad Especialidad? @relation(fields: [especialidad_id], references: [id_especialidad])
+  grupos       Grupo[]
+}
+
+model Periodo {
+  id_periodo      Int           @id @default(autoincrement())
+  year          Int
+  numero Int
+  nombre String
+  fecha_inicio    DateTime      @db.Date
+  fecha_fin       DateTime      @db.Date
+  limite_creditos Int
+  estado          EstadoPeriodo @default(PREPARADO)
+
+  grupos       Grupo[]
+  obligaciones ObligacionFinanciera[]
+}
+
+model Grupo {
+  id_grupo    Int         @id @default(autoincrement())
+  materia_id  Int
+  periodo_id  Int
+  docente_id  Int
+  codigo      String
+  cupo_maximo Int
+  estado      EstadoGrupo @default(ABIERTO)
+
+  materia       Materia        @relation(fields: [materia_id], references: [id_materia])
+  periodo       Periodo        @relation(fields: [periodo_id], references: [id_periodo])
+  docente       Docente        @relation(fields: [docente_id], references: [id_docente])
+  horarios      HorarioGrupo[]
+  inscripciones Inscripcion[]
+  asignaciones  Asignacion[]
+
+  @@unique([materia_id, periodo_id, codigo])
+}
+
+model HorarioGrupo {
+  id_horario  Int      @id @default(autoincrement())
+  grupo_id    Int
+  dia_semana  Dias
+  hora_inicio DateTime @db.Time
+  hora_fin    DateTime @db.Time
+
+  grupo Grupo @relation(fields: [grupo_id], references: [id_grupo])
+}
+
+model Inscripcion {
+  id_inscripcion    Int               @id @default(autoincrement())
+  estudiante_id     Int
+  grupo_id          Int
+  fecha_inscripcion DateTime          @default(now())
+  estado            EstadoInscripcion @default(INSCRITO)
+
+  estudiante   Estudiante              @relation(fields: [estudiante_id], references: [id_estudiante])
+  grupo        Grupo                   @relation(fields: [grupo_id], references: [id_grupo])
+  obligaciones ObligacionFinanciera[]
+
+  @@unique([estudiante_id, grupo_id])
+}
+
+model ObligacionFinanciera {
+  id_obligacion     Int         @id @default(autoincrement())
+  estudiante_id     Int
+  razon             RazonPago
+  monto             Decimal     @db.Decimal(10, 2)
+  fecha_emision     DateTime    @default(now()) @db.Date
+  fecha_vencimiento DateTime    @db.Date
+  estado            EstadoDeuda @default(PENDIENTE)
+  periodo_id        Int?
+  inscripcion_id    Int?
+
+  estudiante  Estudiante   @relation(fields: [estudiante_id], references: [id_estudiante])
+  periodo     Periodo?     @relation(fields: [periodo_id], references: [id_periodo])
+  inscripcion Inscripcion? @relation(fields: [inscripcion_id], references: [id_inscripcion])
+  pagos       Pago[]
+}
+
+model Pago {
+  id_pago                   Int        @id @default(autoincrement())
+  obligacion_id             Int
+  monto                     Decimal    @db.Decimal(10, 2)
+  metodo                    MetodoPago
+  estado                    EstadoPago @default(PENDIENTE)
+  fecha_pago                DateTime   @default(now())
+  referencia_pasarela       String?
+  comprobante_url           String?
+  verificado_por_usuario_id Int?
+  fecha_verificacion        DateTime?
+
+  obligacion           ObligacionFinanciera @relation(fields: [obligacion_id], references: [id_obligacion])
+  verificadoPorUsuario Usuario?             @relation("PagoVerificadoPor", fields: [verificado_por_usuario_id], references: [id_usuario])
+}
+
+model Asignacion {
+  id_asignacion       Int      @id @default(autoincrement())
+  grupo_id            Int
+  docente_id          Int
+  titulo              String
+  instrucciones       String
+  fecha_limite        DateTime
+  creacion_asignacion DateTime @default(now())
+
+  grupo    Grupo     @relation(fields: [grupo_id], references: [id_grupo])
+  docente  Docente   @relation(fields: [docente_id], references: [id_docente])
+  entregas Entrega[]
+}
+
+model Entrega {
+  id_entrega         Int       @id @default(autoincrement())
+  asignacion_id      Int
+  estudiante_id      Int
+  contenido_texto    String?
+  fecha_entrega      DateTime  @default(now())
+  calificacion       Decimal?  @db.Decimal(5, 2)
+  calificado_docente Int?
+  fecha_calificacion DateTime?
+
+  asignacion           Asignacion @relation(fields: [asignacion_id], references: [id_asignacion])
+  estudiante           Estudiante @relation(fields: [estudiante_id], references: [id_estudiante])
+  calificadoPorDocente Docente?   @relation(fields: [calificado_docente], references: [id_docente])
+  archivos             EntregaArchivo[]
+
+  @@unique([asignacion_id, estudiante_id])
+}
+
+model EntregaArchivo {
+  id_archivo Int    @id @default(autoincrement())
+  entrega_id Int
+  url        String
+  nombre     String
+  mimeType   String
+
+  entrega Entrega @relation(fields: [entrega_id], references: [id_entrega])
+}

@@ -5,7 +5,7 @@ import {
   ExceptionFilter,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from './generated/prisma/client.js';
+import { Prisma } from '../generated/prisma/client.js';
 import { Response } from 'express';
 import { STATUS_CODES } from 'http';
 

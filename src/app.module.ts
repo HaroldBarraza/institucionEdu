@@ -3,16 +3,25 @@ import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { PrismaModule } from './prisma/prisma.module.js';
-import { PacientesModule } from './pacientes/pacientes.module.js';
-import { EspecialidadesModule } from './especialidades/especialidades.module.js';
-import { UsersModule } from './users/users.module.js';
-import { EstadoCitasModule } from './estado_citas/estado_citas.module.js';
-import { CitasModule } from './citas/citas.module.js';
-import { AuthModule } from './auth/auth.module.js';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
-import { RolesGuard } from './auth/guards/roles.guard.js';
+
 import { ConfigModule } from '@nestjs/config'
+import { EspecialidadModule } from './especialidad/especialidad.module.js';
+import { TutorModule } from './tutor/tutor.module.js';
+import { PeriodoModule } from './periodo/periodo.module.js';
+import { UsuarioModule } from './usuario/usuario.module.js';
+import { DocenteModule } from './docente/docente.module.js';
+import { EstudianteModule } from './estudiante/estudiante.module.js';
+import { MateriaModule } from './materia/materia.module.js';
+import { GrupoModule } from './grupo/grupo.module.js';
+import { HorarioModule } from './horario/horario.module.js';
+import { InscripcionModule } from './inscripcion/inscripcion.module.js';
+import { ObligacionesModule } from './obligaciones/obligaciones.module.js';
+import { PagoModule } from './pago/pago.module.js';
+import { AsignacionModule } from './asignacion/asignacion.module.js';
+import { EntregaModule } from './entrega/entrega.module.js';
+import { EntregaArchivoModule } from './entrega-archivo/entrega-archivo.module.js';
+
 import Joi from 'joi'
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
@@ -35,15 +44,24 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       serviceId: 'clinica',
     }),
     PrismaModule,
-    PacientesModule,
-    EspecialidadesModule,
-    UsersModule,
-    EstadoCitasModule,
-    CitasModule,
-    AuthModule,
+    EspecialidadModule,
+    TutorModule,
+    PeriodoModule,
+    UsuarioModule,
+    DocenteModule,
+    EstudianteModule,
+    MateriaModule,
+    GrupoModule,
+    HorarioModule,
+    InscripcionModule,
+    ObligacionesModule,
+    PagoModule,
+    AsignacionModule,
+    EntregaModule,
+    EntregaArchivoModule,
 
   ],
   controllers: [AppController],
-  providers: [AppService,{provide: APP_GUARD, useClass: JwtAuthGuard}, {provide:APP_GUARD,useClass: RolesGuard}],
+  providers: [AppService,/* {provide: APP_GUARD, useClass: JwtAuthGuard}, {provide:APP_GUARD,useClass: RolesGuard} */],
 })
 export class AppModule {}
