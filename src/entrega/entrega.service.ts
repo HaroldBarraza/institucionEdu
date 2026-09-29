@@ -8,6 +8,7 @@ import { CreateEntregaDto } from './dto/create-entrega.dto.js';
 import { UpdateEntregaDto } from './dto/update-entrega.dto.js';
 import { CalificarEntregaDto } from './dto/calificar-entrega.dto.js';
 
+
 @Injectable()
 export class EntregaService {
   constructor(private readonly prisma: PrismaService) {}
@@ -105,7 +106,7 @@ export class EntregaService {
   }
   async calificar(id: number, dto: CalificarEntregaDto) {
     const entrega = await this.finOne(id);
-    if (!entrega.calificacion !== null) {
+    if (entrega.calificacion !== null) {
       throw new BadRequestException(`la entrga ya esta calificada`);
     }
     return this.prisma.entrega.update({

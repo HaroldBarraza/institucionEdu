@@ -126,7 +126,7 @@ export class PagoService {
         },
         _sum:{monto:true}
       })
-      const totalPagado = Number(pagoAprobados._sum ?? 0)
+      const totalPagado = Number(pagoAprobados._sum.monto ?? 0)
       const montoObligacion = Number(pago.obligacion.monto)
       if(totalPagado>= montoObligacion){
         await tx.obligacionFinanciera.update({

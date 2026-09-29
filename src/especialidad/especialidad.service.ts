@@ -31,7 +31,7 @@ export class EspecialidadService {
                 }
             }
         })
-        if(!existe){
+        if(existe){
             throw new ConflictException (`la especialidad ${dto.nombre} ya existe`)
         }
         return this.prisma.especialidad.create({data: dto})

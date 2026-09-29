@@ -68,8 +68,8 @@ export class HorarioService {
       data: {
         dia_semana: dto.dia_semana,
         grupo_id: dto.grupo_id,
-        ...(dto.hora_inicio && hora_inicio),
-        ...(dto.hora_fin && hora_fin),
+        ...(dto.hora_inicio && {hora_inicio}),
+        ...(dto.hora_fin && {hora_fin}),
       },
       include: { grupo: true },
     });

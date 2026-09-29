@@ -7,13 +7,17 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { InscripcionService } from './inscripcion.service.js';
 import { CreateInscripcionDto } from './dto/create-inscripcion.dto.js';
 import { UpdateEstadoInscripcionDto } from './dto/update-estado-inscripcion.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../generated/prisma/enums.js';
 
+@ApiBearerAuth()
 @ApiTags("inscripcio")
 @Controller('inscripcion')
+@Roles(Role.ADMINISTRADOR,Role.ESTUDIANTE,Role.RECEPCIONISTA)
 export class InscripcionController {
     constructor(private readonly inscripcionService: InscripcionService) {}
     @Get()
@@ -21,7 +25,7 @@ export class InscripcionController {
         return this.inscripcionService.findall()
     }
     @Get(":id")
-    findOne(id:number){
+    findOne(@Param("id")id:number){
         return this.inscripcionService.findOne(+id)
     }
     @Post()

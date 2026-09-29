@@ -7,12 +7,16 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+
 import { PeriodoService } from './periodo.service.js';
 import { CreatePeriododto } from './dto/create.periodo.dto.js';
 import { CambiarEstadoPeriododto } from './dto/update.periodo.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../generated/prisma/enums.js';
 
 
+@ApiBearerAuth()
 @ApiTags('periodos')
 @Controller('periodo')
 export class PeriodoController {
@@ -29,15 +33,14 @@ export class PeriodoController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.periodoService.findOne(id);
+  @Roles(Role.ADMINISTRADOR)
+  findOne(@Param('id') id: string) {
+    return this.periodoService.findOne(+id);
   }
 
   @Patch(':id/estado')
-  cambiarEstado(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: CambiarEstadoPeriododto,
-  ) {
-    return this.periodoService.updateEstado(id, dto);
+  @Roles(Role.ADMINISTRADOR)
+  cambiarEstado(@Param('id') id: string,@Body() dto: CambiarEstadoPeriododto) {
+    return this.periodoService.updateEstado(+id, dto);
   }
 }

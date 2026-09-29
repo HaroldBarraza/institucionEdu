@@ -7,13 +7,17 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { MateriaService } from './materia.service.js';
 import { CreateMateriaDto } from './dto/create-materia.dto.js';
 import { UpdateMateriaDto } from './dto/update-materia.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../generated/prisma/enums.js';
 
+@ApiBearerAuth()
 @ApiTags('materias')
 @Controller('materia')
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
 export class MateriaController {
     constructor(private readonly materiaService:MateriaService){}
     @Get()
@@ -28,7 +32,7 @@ export class MateriaController {
     create(@Body() dto:CreateMateriaDto){
         return this.materiaService.create(dto)
     }
-    @Post(":id")
+    @Patch(":id")
     update(@Param("id") id:string, @Body() dto:UpdateMateriaDto){
         return this.materiaService.update(+id, dto)
     }

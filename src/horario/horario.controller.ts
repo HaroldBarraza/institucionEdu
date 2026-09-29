@@ -7,13 +7,17 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { HorarioService } from './horario.service.js';
 import { CreateHorarioGrupoDto } from './dto/create-horario-grupo.dto.js';
 import { UpdateHorarioGrupoDto } from './dto/update-horario-grupo.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../generated/prisma/enums.js';
 
 @ApiTags('horarios-grupo')
+@ApiBearerAuth()
 @Controller('horario')
+@Roles(Role.ADMINISTRADOR,Role.RECEPCIONISTA)
 export class HorarioController {
     constructor(private readonly horarioService:HorarioService){}
     @Get()

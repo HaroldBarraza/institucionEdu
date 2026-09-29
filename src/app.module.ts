@@ -21,6 +21,10 @@ import { PagoModule } from './pago/pago.module.js';
 import { AsignacionModule } from './asignacion/asignacion.module.js';
 import { EntregaModule } from './entrega/entrega.module.js';
 import { EntregaArchivoModule } from './entrega-archivo/entrega-archivo.module.js';
+import { AuthModule } from './auth/auth.module.js';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from './auth/guards/roles.guard.js';
+import { RegistroEstudianteModule } from './registro-estudiante/registro-estudiante.module.js';
 
 import Joi from 'joi'
 
@@ -59,9 +63,11 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     AsignacionModule,
     EntregaModule,
     EntregaArchivoModule,
+    AuthModule,
+    RegistroEstudianteModule,
 
   ],
   controllers: [AppController],
-  providers: [AppService,/* {provide: APP_GUARD, useClass: JwtAuthGuard}, {provide:APP_GUARD,useClass: RolesGuard} */],
+  providers: [AppService, {provide: APP_GUARD, useClass: JwtAuthGuard}, {provide:APP_GUARD,useClass: RolesGuard}],
 })
 export class AppModule {}

@@ -7,14 +7,17 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-
-import { ApiTags } from '@nestjs/swagger';
 import { EstudianteService } from './estudiante.service.js';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto.js';
 import { UpdateEstudianteDto } from './dto/update-estudiante.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../generated/prisma/enums.js';
 
 @ApiTags('estudiantes')
+@ApiBearerAuth()
 @Controller('estudiante')
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
 export class EstudianteController {
     constructor(private readonly estudianteService:EstudianteService){}
     @Get()

@@ -3,17 +3,20 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { EntregaArchivoService } from './entrega-archivo.service.js';
 import { CreateEntregaArchivoDto } from './dto/create-entrega-archivo.dto.js';
 import { UpdateEntregaArchivoDto } from './dto/update-entrega-archivo.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../generated/prisma/enums.js';
 
+@ApiBearerAuth()
 @ApiTags('entrega-archivos')
 @Controller('entrega-archivo')
+@Roles(Role.ADMINISTRADOR, Role.ESTUDIANTE, Role.PROFESOR)
 export class EntregaArchivoController {
     constructor(private readonly entregarArchivoService: EntregaArchivoService){}
     @Get()
@@ -29,7 +32,7 @@ export class EntregaArchivoController {
         return this.entregarArchivoService.create(dto)
     }
     @Patch(":id")
-    update(@Param("id") id:string, dto:UpdateEntregaArchivoDto){
+    update(@Param("id") id:string, @Body() dto:UpdateEntregaArchivoDto){
         return this.entregarArchivoService.update(+id, dto)
     }
 }

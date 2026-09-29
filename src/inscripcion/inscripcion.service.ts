@@ -77,7 +77,7 @@ export class InscripcionService {
         }    
     })
     if(!grupo){
-        throw new BadRequestException(`el grupo con id ${dto.grupo_id} mp existe`)
+        throw new BadRequestException(`el grupo con id ${dto.grupo_id} no existe`)
     }
     if(grupo.estado !== EstadoGrupo.ABIERTO){
         throw new BadRequestException(`el grupo no esta abierto el estado actiual es de ${grupo.estado}`)
@@ -113,9 +113,9 @@ export class InscripcionService {
             }
         }
     })
-    this.validarMateria(inscripcionesActivas, grupo.materia_id),
-    this.ValidarCreditos(inscripcionesActivas, grupo.materia.creditos, grupo.periodo.limite_creditos)
-    this.validarTraslape(inscripcionesActivas, grupo.horarios)
+    this.validarMateria(inscripcionesActivas, grupo.materia_id);
+    this.ValidarCreditos(inscripcionesActivas, grupo.materia.creditos, grupo.periodo.limite_creditos);
+    this.validarTraslape(inscripcionesActivas, grupo.horarios);
     return this.prisma.inscripcion.create({
         data:{
             estudiante_id:dto.estudiante_id,
@@ -169,7 +169,7 @@ export class InscripcionService {
       throw new BadRequestException(`El grupo esta lleno`);
     }
   }
-  private async validarMateria(
+  private validarMateria(
     inscripcion: { grupo: { materia_id: number } }[],
     materia_id: number,
   ) {

@@ -25,11 +25,11 @@ export class AsignacionController {
     return this.asignacionService.findOne(+id);
   }
   @Post()
-  create(dto:CreateAsignacionDto){
+  create(@Body() dto:CreateAsignacionDto){
     return this.asignacionService.create(dto)
   }
   @Patch(":id")
-  update(@Param("id") id:string, dto:UpdateAsignacionDto){
+  update(@Param("id") id:string, @Body() dto:UpdateAsignacionDto){
     return this.asignacionService.update(+id, dto)
   }
 }
