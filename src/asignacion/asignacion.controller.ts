@@ -7,12 +7,16 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AsignacionService } from './asignacion.service.js';
 import { CreateAsignacionDto } from './dto/create-asignacion.dto.js';
 import { UpdateAsignacionDto } from './dto/update-asignacion.dto.js';
+import { Roles } from '../auth/decorators/roles.decorator.js';
+import { Role } from '../generated/prisma/enums.js';
 
+@ApiBearerAuth()
 @ApiTags('asinacion')
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
 @Controller('asignacion')
 export class AsignacionController {
   constructor(private readonly asignacionService: AsignacionService) {}
