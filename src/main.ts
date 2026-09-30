@@ -6,6 +6,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggingInterceptor } from './common/logging.interceptor.js';
 import { PrismaExceptionFilter } from './prisma/prisma-exception.filter.js';
+import { AllExceptionsFilter } from './common/all-exceptions.filter.js';
+
+
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -19,6 +23,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalFilters(new PrismaExceptionFilter());
 
   const config = new DocumentBuilder()
