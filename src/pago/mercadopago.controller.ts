@@ -19,18 +19,24 @@ import { CrearPreferenciaDto } from './dto/crear-preferencia.dto.js';
 import { Public } from '../auth/decorators/public.decorators.js';
 import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('pagos-mercadopago')
 @ApiBearerAuth()
 @Controller('pagos/mercadopago')
 export class MercadoPagoController {
-  constructor(private readonly mpService: MercadoPagoService) {}
+  constructor(
+    private readonly mpService: MercadoPagoService,
+    private readonly config: ConfigService,
+  ) {}
 
   @Post('preference')
   @Roles(Role.ADMINISTRADOR, Role.ESTUDIANTE, Role.RECEPCIONISTA)
   @ApiOperation({ summary: 'Crear preferecias de pago Mercado Pago' })
-  crearPreferencias(@Body() dto: CrearPreferenciaDto, @Req() req: Request) {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+  crearPreferencias(@Body() dto: CrearPreferenciaDto) {
+    const baseUrl = this.config.get<string>('APP_BASE_URL')!;
+    console.log('APP_BASE_URL:', baseUrl);
+    console.log('SUCCESS URL:', `${baseUrl}/pagos/mercadopago/exito`);
     return this.mpService.crearPreferencia(dto.obligacion_id, baseUrl);
   }
   @Public()

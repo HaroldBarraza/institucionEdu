@@ -58,7 +58,6 @@ export class MercadoPagoService {
                 failure: `${baseUrl}/pagos/mercadopago/fallo`,
                 pending: `${baseUrl}/pagos/mercadopago/pendiente`,
             },
-            auto_return: "approved",
             notification_url: `${baseUrl}/pagos/mercadopago/webhook`,
             external_reference: `OBL-${obligacion_id}`,
             statement_descriptor: "SGAF"
