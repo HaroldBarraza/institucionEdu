@@ -14,6 +14,7 @@ import { CalificarEntregaDto } from './dto/calificar-entrega.dto.js';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
+import{ CurrentUser, type JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
 @ApiBearerAuth()
 @ApiTags("1.4 Entrega")
@@ -34,18 +35,18 @@ export class EntregaController {
   @Roles(Role.ESTUDIANTE)
   @ApiOperation({summary: "se crea una nueva entrega de tarea"})
   @Post()
-  create(@Body() dto:CreateEntregaDto){
-    return this.entregaService.create(dto)
+  create(@Body() dto:CreateEntregaDto,@CurrentUser() user:JwtPayload){
+    return this.entregaService.create(dto,user)
   }
   @ApiOperation({summary:"actualiza una entrega del estudiante"})
   @Patch(":id")
-  update(@Param("id") id:string, @Body() dto:UpdateEntregaDto){
-    return this.entregaService.update(+id, dto)
+  update(@Param("id") id:string, @Body() dto:UpdateEntregaDto, @CurrentUser() user:JwtPayload){
+    return this.entregaService.update(+id, dto, user)
   }
   @Roles(Role.ADMINISTRADOR, Role.PROFESOR)
   @ApiOperation({summary: "el profesor califica una entrega de sus asignaciones "})
   @Patch(":id/calificar")
-  calificar(@Param("id") id:string, @Body() dto:CalificarEntregaDto){
-    return this.entregaService.calificar(+id, dto)
+  calificar(@Param("id") id:string, @Body() dto:CalificarEntregaDto, @CurrentUser() user:JwtPayload){
+    return this.entregaService.calificar(+id, dto, user)
   }
 }
