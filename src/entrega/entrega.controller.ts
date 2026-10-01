@@ -42,6 +42,7 @@ export class EntregaController {
   update(@Param("id") id:string, @Body() dto:UpdateEntregaDto){
     return this.entregaService.update(+id, dto)
   }
+  @Roles(Role.ADMINISTRADOR, Role.PROFESOR)
   @ApiOperation({summary: "el profesor califica una entrega de sus asignaciones "})
   @Patch(":id/calificar")
   calificar(@Param("id") id:string, @Body() dto:CalificarEntregaDto){
