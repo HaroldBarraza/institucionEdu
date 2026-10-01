@@ -62,6 +62,8 @@ export class AsignacionService {
         }
         return asignacion
     }
+
+    //feature ya no pedir id sino que solo un maestro pueda crear y que se vincule con el id
     create(dto: CreateAsignacionDto){
         return this.prisma.asignacion.create({
             data:dto,
@@ -80,6 +82,7 @@ export class AsignacionService {
             }
         })
     }
+    //feature: que el profesor solo pueda actulizar los cursos que el tiene disponible 
     async update(id:number, dto:UpdateAsignacionDto){
         await this.findOne(id)
         return this.prisma.asignacion.update({

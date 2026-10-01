@@ -1,7 +1,5 @@
 import { ConfigurableModuleBuilder, Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -67,7 +65,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     RegistroEstudianteModule,
 
   ],
-  controllers: [AppController],
-  providers: [AppService, {provide: APP_GUARD, useClass: JwtAuthGuard}, {provide:APP_GUARD,useClass: RolesGuard}],
+  controllers: [],
+  providers: [{provide: APP_GUARD, useClass: JwtAuthGuard}, {provide:APP_GUARD,useClass: RolesGuard}],
 })
 export class AppModule {}

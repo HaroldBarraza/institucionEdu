@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateObligacionDto } from './dto/create-obligacion.dto.js';
-import { UpdateObligacionDto } from './dto/update-obligacion.dto.js';
 import { CambiarEstadoObligacionDto } from './dto/cambiar-estado-obligacion.dto.js';
 import { EstadoDeuda, EstadoUsuario } from '../generated/prisma/enums.js';
 import { Role } from '../generated/prisma/enums.js';
@@ -67,24 +66,6 @@ export class ObligacionesService {
                     usuario:true
                 }
             },periodo:true
-        }
-    })
-  }
-  async update(id:number, dto:UpdateObligacionDto){
-    const obligacion = await this.findOne(id)
-    if(obligacion.estado === 'PAGADO'){
-        throw new BadRequestException(`no se puede modificar cuando el estod es pagado`)
-    }
-    return this.prisma.obligacionFinanciera.update({
-        where:{id_obligacion:id},
-        data:dto,
-        include:{
-            estudiante:{
-                include:{
-                    usuario:true
-                }
-            },
-            periodo:true
         }
     })
   }

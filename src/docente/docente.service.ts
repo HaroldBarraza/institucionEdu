@@ -46,6 +46,7 @@ export class DocenteService {
     }
     return docente;
   }
+  //feat: que se cree en conjunto como en estudiante
   async create(dto: CreateDocenteDto) {
     return this.prisma.docente.create({
       data: {
