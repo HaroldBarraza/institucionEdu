@@ -35,7 +35,7 @@ export class PagoController {
     }
     @ApiOperation({summary: "crear un nuevo pago"})
     @Post()
-    @Roles(Role.ESTUDIANTE,Role.ADMINISTRADOR,Role.RECEPCIONISTA)
+    @Roles(Role.ADMINISTRADOR,Role.RECEPCIONISTA)
     create(@Body() dto:CreatePagoDto){
         return this.pagoService.create(dto)
     }

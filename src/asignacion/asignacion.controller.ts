@@ -16,7 +16,7 @@ import { Role } from '../generated/prisma/enums.js';
 
 @ApiBearerAuth()
 @ApiTags('2.4 Asignacion')
-@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA, Role.PROFESOR)
 @Controller('asignacion')
 export class AsignacionController {
   constructor(private readonly asignacionService: AsignacionService) {}
