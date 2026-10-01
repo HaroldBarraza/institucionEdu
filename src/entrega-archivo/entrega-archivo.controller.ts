@@ -14,7 +14,7 @@ import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
 
 @ApiBearerAuth()
-@ApiTags('entrega-archivos')
+@ApiTags('1.5 Entrega-archivos')
 @Controller('entrega-archivo')
 @Roles(Role.ADMINISTRADOR, Role.ESTUDIANTE, Role.PROFESOR)
 export class EntregaArchivoController {

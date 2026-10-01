@@ -21,7 +21,7 @@ import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
 import { ConfigService } from '@nestjs/config';
 
-@ApiTags('pagos-mercadopago')
+@ApiTags('1.2 Pagos-Mercadopago')
 @ApiBearerAuth()
 @Controller('pagos/mercadopago')
 export class MercadoPagoController {
