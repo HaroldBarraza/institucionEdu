@@ -31,7 +31,7 @@ export class MercadoPagoController {
   ) {}
 
   @Post('preference')
-  @Roles(Role.ADMINISTRADOR, Role.ESTUDIANTE, Role.RECEPCIONISTA)
+  @Public()
   @ApiOperation({ summary: 'Crear preferecias de pago Mercado Pago' })
   crearPreferencias(@Body() dto: CrearPreferenciaDto) {
     const baseUrl = this.config.get<string>('APP_BASE_URL')!;
