@@ -7,11 +7,6 @@ export class CreateEntregaDto {
   @IsPositive()
   asignacion_id: number;
 
-  @ApiProperty({ example: 10 })
-  @IsInt()
-  @IsPositive()
-  estudiante_id: number;
-
   @ApiProperty({ example: 'Aquí está mi solución...', required: false })
   @IsString()
   @IsOptional()
