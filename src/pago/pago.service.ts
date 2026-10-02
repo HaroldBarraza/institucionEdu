@@ -10,7 +10,6 @@ import {
 } from '../generated/prisma/enums.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreatePagoDto } from './dto/create-pago.dto.js';
-import { AprobarPagoDto } from './dto/aprobar-pago.dto.js';
 import { FiltroPagoDto } from './dto/filtrar-pago.dto.js';
 import { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
@@ -94,16 +93,19 @@ export class PagoService {
     if (dto.monto > Number(obligacion.monto)) {
       throw new BadRequestException(`el monto del pago supero a la deuda`);
     }
+    if(dto.monto < Number(obligacion.monto)){
+      throw new BadRequestException(`el monto del pago tiene que ser no menor a ${obligacion.monto}`)
+    }
     const caja = dto.metodo === MetodoPago.CAJA 
     
     const datoApro = caja ? { 
       estado: EstadoPago.ACEPTADO,
       fecha_verificacion: new Date(),
-      verificado_id: user.sub
+      verificado_por_usuario_id: user.sub
     }:{
       estado: EstadoPago.PENDIENTE,
       fecha_verificacion: null,
-      verficado_id: null
+      verificado_por_usuario_id: null
     }
 
     return this.prisma.pago.create({

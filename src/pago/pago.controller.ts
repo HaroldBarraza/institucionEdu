@@ -11,7 +11,6 @@ import {
 
 import { PagoService } from './pago.service.js';
 import { CreatePagoDto } from './dto/create-pago.dto.js';
-import { AprobarPagoDto } from './dto/aprobar-pago.dto.js';
 import { FiltroPagoDto } from './dto/filtrar-pago.dto.js';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator.js';
