@@ -43,7 +43,7 @@ export class EstudianteController {
         return this.estudianteService.update(dto,+id)
     }
     @ApiOperation({summary: "se obtiene la informaicon financiera de un alumno"})
-    @Get("me")
+    @Get("me/:id")
     getdeudas(@Param() id:string){
         return this.estudianteService.gethistorial(+id)
     }
