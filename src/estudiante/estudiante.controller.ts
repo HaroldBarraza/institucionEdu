@@ -13,6 +13,8 @@ import { UpdateEstudianteDto } from './dto/update-estudiante.dto.js';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
+import { CurrentUser} from '../auth/decorators/current-user.decorator.js';
+import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
 @ApiTags('estudiantes')
 @ApiBearerAuth()
@@ -39,5 +41,10 @@ export class EstudianteController {
     @Patch(":id")
     update(@Param("id") id:string, @Body() dto:UpdateEstudianteDto){
         return this.estudianteService.update(dto,+id)
+    }
+    @ApiOperation({summary: "se obtiene la informaicon financiera de un alumno"})
+    @Get("me")
+    getdeudas(@Param() id:string){
+        return this.estudianteService.gethistorial(+id)
     }
 }

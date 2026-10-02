@@ -130,7 +130,6 @@ model Especialidad {
   descripcion     String?
 
   docentes Docente[]
-  materias Materia[]
 }
 
 model Materia {
@@ -139,9 +138,6 @@ model Materia {
   creditos          Int
   costo_inscripcion Decimal @db.Decimal(10, 2)
   costo_mensualidad Decimal @db.Decimal(10, 2)
-  especialidad_id   Int?
-
-  especialidad Especialidad? @relation(fields: [especialidad_id], references: [id_especialidad])
   grupos       Grupo[]
 }
 

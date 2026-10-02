@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateEstudianteDto } from './dto/update-estudiante.dto.js';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
 @Injectable()
 export class EstudianteService {
@@ -82,5 +83,20 @@ export class EstudianteService {
         tutor: true,
       },
     });
+  }
+  async gethistorial(id:number){
+    return await this.prisma.estudiante.findFirst({
+      where: {id_estudiante: id},
+      include:{
+        usuario:true,
+        obligaciones:{
+          select:{
+            razon: true,
+            monto: true,
+            estado: true
+          }
+        }
+      },
+    })
   }
 }
