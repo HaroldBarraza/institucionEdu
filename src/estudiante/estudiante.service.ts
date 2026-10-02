@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateEstudianteDto } from './dto/update-estudiante.dto.js';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { JwtPayload } from '../auth/decorators/current-user.decorator.js';
+import { EstadoUsuario } from '../generated/prisma/enums.js';
 
 @Injectable()
 export class EstudianteService {
@@ -143,5 +148,32 @@ export class EstudianteService {
     }
 
     return estudiante;
+  }
+  async cambiarEstadoEstudiante(
+    estudianteId: number,
+    nuevoEstado: EstadoUsuario,
+  ) {
+    if (nuevoEstado === EstadoUsuario.SUSPENDIDO_MORA) {
+      const deudasVencidas = await this.prisma.obligacionFinanciera.count({
+        where: {
+          estudiante_id: estudianteId,
+          estado: 'PENDIENTE',
+          fecha_vencimiento: {
+            lt: new Date(),
+          },
+        },
+      });
+
+      if (deudasVencidas === 0) {
+        throw new BadRequestException(
+          'No se puede cambiar el estado a SUSPENDIDO_MORA: El estudiante no registra deudas vencidas.',
+        );
+      }
+    }
+
+    return await this.prisma.usuario.update({
+      where: { id_usuario: estudianteId },
+      data: { estado: nuevoEstado },
+    });
   }
 }

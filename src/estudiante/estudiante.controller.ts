@@ -15,6 +15,7 @@ import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
 import { CurrentUser} from '../auth/decorators/current-user.decorator.js';
 import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
+import { CambiarEstadoDto } from './dto/update-estado.dto.js';
 
 @ApiTags('estudiantes')
 @ApiBearerAuth()
@@ -46,5 +47,10 @@ export class EstudianteController {
     @Get(":id/me")
     getdeudas(@Param("id") id:string){
         return this.estudianteService.gethistorial(+id)
+    }
+    @ApiOperation({summary: "se cambia el estado del estudiante"})
+    @Patch(":id/mora")
+    cambiarmora(@Param("id") id: string, @Body() dto: CambiarEstadoDto){
+        return this.estudianteService.cambiarEstadoEstudiante(+id, dto.estado)
     }
 }
