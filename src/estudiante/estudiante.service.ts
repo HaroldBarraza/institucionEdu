@@ -84,19 +84,64 @@ export class EstudianteService {
       },
     });
   }
-  async gethistorial(id:number){
-    return await this.prisma.estudiante.findFirst({
-      where: {id_estudiante: id},
-      include:{
-        usuario:true,
-        obligaciones:{
-          select:{
+  async gethistorial(id: number) {
+    const estudiante = await this.prisma.estudiante.findUnique({
+      where: { id_estudiante: id },
+      select: {
+        id_estudiante: true,
+        codigo_matricula: true,
+        usuario: {
+          select: {
+            id_usuario: true,
+            email: true,
+            nombre: true,
+            appaterno: true,
+            apmaterno: true,
+            telefono: true,
+            estado: true,
+          },
+        },
+        obligaciones: {
+          select: {
+            id_obligacion: true,
             razon: true,
             monto: true,
-            estado: true
-          }
-        }
+            fecha_emision: true,
+            fecha_vencimiento: true,
+            estado: true,
+            periodo: {
+              select: { nombre: true, year: true, numero: true },
+            },
+            pagos: {
+              select: {
+                id_pago: true,
+                monto: true,
+                metodo: true,
+                estado: true,
+                fecha_pago: true,
+                referencia_pasarela: true,
+                fecha_verificacion: true,
+                verificadoPorUsuario: {
+                  select: {
+                    id_usuario: true,
+                    nombre: true,
+                    appaterno: true,
+                    rol: true,
+                  },
+                },
+              },
+              orderBy: { fecha_pago: 'desc' },
+            },
+          },
+          orderBy: { fecha_vencimiento: 'desc' },
+        },
       },
-    })
+    });
+
+    if (!estudiante) {
+      throw new NotFoundException(`Estudiante ${id} no encontrado`);
+    }
+
+    return estudiante;
   }
 }
