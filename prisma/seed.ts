@@ -569,8 +569,8 @@ async function main() {
       { grupo_id: 1, dia_semana: Dias.LUNES, hora_inicio: new Date("1970-01-01T08:00:00Z"), hora_fin: new Date("1970-01-01T10:00:00Z") },
       { grupo_id: 1, dia_semana: Dias.MIERCOLES, hora_inicio: new Date("1970-01-01T08:00:00Z"), hora_fin: new Date("1970-01-01T10:00:00Z") },
       // Grupo 2: Mate B — Lunes y Miércoles 10-12 (para probar traslape con A)
-      { grupo_id: 2, dia_semana: Dias.LUNES, hora_inicio: new Date("1970-01-01T10:00:00Z"), hora_fin: new Date("1970-01-01T12:00:00Z") },
-      { grupo_id: 2, dia_semana: Dias.MIERCOLES, hora_inicio: new Date("1970-01-01T10:00:00Z"), hora_fin: new Date("1970-01-01T12:00:00Z") },
+      { grupo_id: 2, dia_semana: Dias.LUNES, hora_inicio: new Date("1970-01-01T08:00:00Z"), hora_fin: new Date("1970-01-01T10:00:00Z") },
+      { grupo_id: 2, dia_semana: Dias.MIERCOLES, hora_inicio: new Date("1970-01-01T08:00:00Z"), hora_fin: new Date("1970-01-01T10:00:00Z") },
       // Grupo 3: Física A — Martes y Jueves 10-12
       { grupo_id: 3, dia_semana: Dias.MARTES, hora_inicio: new Date("1970-01-01T10:00:00Z"), hora_fin: new Date("1970-01-01T12:00:00Z") },
       { grupo_id: 3, dia_semana: Dias.JUEVES, hora_inicio: new Date("1970-01-01T10:00:00Z"), hora_fin: new Date("1970-01-01T12:00:00Z") },
