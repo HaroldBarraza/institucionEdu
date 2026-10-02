@@ -44,7 +44,7 @@ export class EstudianteController {
     }
     @ApiOperation({summary: "se obtiene la informaicon financiera de un alumno"})
     @Get("me/:id")
-    getdeudas(@Param() id:string){
+    getdeudas(@Param("id") id:string){
         return this.estudianteService.gethistorial(+id)
     }
 }
