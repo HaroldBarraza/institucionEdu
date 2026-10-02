@@ -13,6 +13,8 @@ import { UpdateEstadoInscripcionDto } from './dto/update-estado-inscripcion.dto.
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
+import { CurrentUser} from '../auth/decorators/current-user.decorator.js';
+import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
 @ApiBearerAuth()
 @ApiTags("1.3 Inscripcion")
@@ -32,8 +34,8 @@ export class InscripcionController {
     }
     @ApiOperation({summary: "crea una nueva inscripcion"})
     @Post()
-    create(@Body()dto:CreateInscripcionDto){
-        return this.inscripcionService.create(dto)
+    create(@Body()dto:CreateInscripcionDto, @CurrentUser() user:JwtPayload){
+        return this.inscripcionService.create(dto, user)
     }
     @ApiOperation({summary: "actuliza una inscripcion"})
     @Patch(":id")

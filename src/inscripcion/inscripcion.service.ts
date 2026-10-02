@@ -12,6 +12,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateInscripcionDto } from './dto/create-inscripcion.dto.js';
 import { UpdateEstadoInscripcionDto } from './dto/update-estado-inscripcion.dto.js';
+import { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
 @Injectable()
 export class InscripcionService {
@@ -67,7 +68,7 @@ export class InscripcionService {
     }
     return result;
   }
-  async create(dto: CreateInscripcionDto) {
+  async create(dto: CreateInscripcionDto, user:JwtPayload) {
     const grupo = await this.prisma.grupo.findUnique({
         where:{id_grupo: dto.grupo_id},
         include:{
@@ -86,13 +87,13 @@ export class InscripcionService {
         throw new BadRequestException(`el periodo ${grupo.periodo.nombre} no esta activo`)
     }
     const estudiante = await this.prisma.estudiante.findUnique({
-        where:{id_estudiante: dto.estudiante_id},
+        where:{id_estudiante: user.sub},
         include:{
             usuario:true
         }
     })
     if(!estudiante){
-        throw new BadRequestException(`estudiante ${dto.estudiante_id} no exite`)
+        throw new BadRequestException(`estudiante ${user.sub} no exite`)
     }
     if(estudiante.usuario.estado !== EstadoUsuario.ACTIVO){
         throw new BadRequestException(`el estudiante no esta activo estado:${estudiante.usuario.estado}`)
@@ -100,7 +101,7 @@ export class InscripcionService {
     await this.validarcupos(grupo.id_grupo, grupo.cupo_maximo)
     const inscripcionesActivas = await this.prisma.inscripcion.findMany({
         where:{
-            estudiante_id:dto.estudiante_id,
+            estudiante_id:user.sub,
             estado: EstadoInscripcion.INSCRITO,
             grupo:{periodo_id:grupo.periodo_id}
         },
@@ -118,7 +119,7 @@ export class InscripcionService {
     this.validarTraslape(inscripcionesActivas, grupo.horarios);
     return this.prisma.inscripcion.create({
         data:{
-            estudiante_id:dto.estudiante_id,
+            estudiante_id:user.sub,
             grupo_id:dto.grupo_id
         },
         include:{
