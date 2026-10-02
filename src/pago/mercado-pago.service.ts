@@ -54,9 +54,9 @@ export class MercadoPagoService {
                 surname: obligacion.estudiante.usuario.appaterno,
             },
             back_urls:{
-                success: `${baseUrl}/pagos/mercadopago/exito`,
-                failure: `${baseUrl}/pagos/mercadopago/fallo`,
-                pending: `${baseUrl}/pagos/mercadopago/pendiente`,
+                success: `${baseUrl}/api/doc/pagos/mercadopago/exito`,
+                failure: `${baseUrl}/api/doc/pagos/mercadopago/fallo`,
+                pending: `${baseUrl}/api/doc/pagos/mercadopago/pendiente`,
             },
             notification_url: `${baseUrl}/pagos/mercadopago/webhook`,
             external_reference: `OBL-${obligacion_id}`,

@@ -9,16 +9,14 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiExcludeEndpoint,
   ApiOperation,
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import type { Request } from 'express';
 import { MercadoPagoService } from './mercado-pago.service.js';
 import { CrearPreferenciaDto } from './dto/crear-preferencia.dto.js';
 import { Public } from '../auth/decorators/public.decorators.js';
-import { Roles } from '../auth/decorators/roles.decorator.js';
-import { Role } from '../generated/prisma/enums.js';
 import { ConfigService } from '@nestjs/config';
 
 @ApiTags('1.2 Pagos-Mercadopago')
@@ -37,6 +35,7 @@ export class MercadoPagoController {
     const baseUrl = this.config.get<string>('APP_BASE_URL')!;
     return this.mpService.crearPreferencia(dto.obligacion_id, baseUrl);
   }
+  @ApiExcludeEndpoint()
   @Public()
   @Post('webhook')
   @ApiOperation({ summary: 'Webhook de notificaciones de Mercado Pago' })
@@ -51,19 +50,22 @@ export class MercadoPagoController {
     }
     return this.mpService.procesarWebhook(String(paymentId));
   }
-/*   @Public()
+  @ApiExcludeEndpoint()
+  @Public()
   @Get('exito')
   exito() {
     return { mensaje: 'Pago aprobado. Espera la aprobacion de recepcion' };
   }
+  @ApiExcludeEndpoint()
   @Public()
   @Get('pendiente')
   pendiente() {
     return { mensaje: 'Pago pendiente. Espera la confirmacion' };
   }
+  @ApiExcludeEndpoint()
   @Public()
   @Get('fallo')
   fallo() {
     return { mensaje: 'Pago rechazado. Intenta de nuevo.' };
-  } */
+  }
 }
