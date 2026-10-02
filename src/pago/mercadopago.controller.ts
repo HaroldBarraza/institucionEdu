@@ -35,8 +35,6 @@ export class MercadoPagoController {
   @ApiOperation({ summary: 'Crear preferecias de pago Mercado Pago' })
   crearPreferencias(@Body() dto: CrearPreferenciaDto) {
     const baseUrl = this.config.get<string>('APP_BASE_URL')!;
-    console.log('APP_BASE_URL:', baseUrl);
-    console.log('SUCCESS URL:', `${baseUrl}/pagos/mercadopago/exito`);
     return this.mpService.crearPreferencia(dto.obligacion_id, baseUrl);
   }
   @Public()
@@ -53,7 +51,7 @@ export class MercadoPagoController {
     }
     return this.mpService.procesarWebhook(String(paymentId));
   }
-  @Public()
+/*   @Public()
   @Get('exito')
   exito() {
     return { mensaje: 'Pago aprobado. Espera la aprobacion de recepcion' };
@@ -67,5 +65,5 @@ export class MercadoPagoController {
   @Get('fallo')
   fallo() {
     return { mensaje: 'Pago rechazado. Intenta de nuevo.' };
-  }
+  } */
 }
