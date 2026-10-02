@@ -13,6 +13,8 @@ import { CreateAsignacionDto } from './dto/create-asignacion.dto.js';
 import { UpdateAsignacionDto } from './dto/update-asignacion.dto.js';
 import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
 @ApiBearerAuth()
 @ApiTags('2.4 Asignacion')
@@ -33,8 +35,8 @@ export class AsignacionController {
   @Roles(Role.ADMINISTRADOR, Role.PROFESOR)
   @ApiOperation({summary: "crea una nueva asginacion", description: "el profesor crea un nueva asiganacio para una grupo determinado"})
   @Post()
-  create(@Body() dto:CreateAsignacionDto){
-    return this.asignacionService.create(dto)
+  create(@Body() dto:CreateAsignacionDto, @CurrentUser() user:JwtPayload){
+    return this.asignacionService.create(dto, user)
   }
   @Roles(Role.ADMINISTRADOR, Role.PROFESOR)
   @ApiOperation({summary: "actuliza un asignacion", description: "el profesor pude actulizar una asignaicon que desee"})
