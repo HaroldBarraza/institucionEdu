@@ -15,10 +15,6 @@ export class CreateAsignacionDto {
   @IsPositive()
   grupo_id: number;
 
-  @ApiProperty({ example: 5, description: 'id del docente que publica' })
-  @IsInt()
-  @IsPositive()
-  docente_id: number;
 
   @ApiProperty({ example: 'Ensayo sobre derivadas' })
   @IsString()
