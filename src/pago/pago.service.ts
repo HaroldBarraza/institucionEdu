@@ -76,7 +76,7 @@ export class PagoService {
     }
     return pago;
   }
-  async create(dto: CreatePagoDto) {
+  async create(dto: CreatePagoDto, user:JwtPayload) {
     const obligacion = await this.prisma.obligacionFinanciera.findUnique({
       where: { id_obligacion: dto.obligacion_id },
     });
@@ -94,10 +94,20 @@ export class PagoService {
     if (dto.monto > Number(obligacion.monto)) {
       throw new BadRequestException(`el monto del pago supero a la deuda`);
     }
-    const esPasarela = dto.metodo === MetodoPago.PASARELA_EN_LINEA;
+    const caja = dto.metodo === MetodoPago.CAJA 
+    
+    const datoApro = caja ? { 
+      estado: EstadoPago.ACEPTADO,
+      fecha_verificacion: new Date(),
+      verificado_id: user.sub
+    }:{
+      estado: EstadoPago.PENDIENTE,
+      fecha_verificacion: null,
+      verficado_id: null
+    }
 
     return this.prisma.pago.create({
-      data: dto,
+      data: {...dto, ...datoApro},
       include: {
         obligacion: true,
       },

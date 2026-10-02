@@ -39,8 +39,8 @@ export class PagoController {
   @ApiOperation({ summary: 'crear un nuevo pago' })
   @Post()
   @Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
-  create(@Body() dto: CreatePagoDto) {
-    return this.pagoService.create(dto);
+  create(@Body() dto: CreatePagoDto, @CurrentUser() user:JwtPayload) {
+    return this.pagoService.create(dto, user);
   }
   @ApiOperation({ summary: 'actualizar el estado del pago' })
   @Patch(':id/aprobar')
