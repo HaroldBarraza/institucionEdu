@@ -31,10 +31,4 @@ export class CreateMateriaDto {
   @IsNumber()
   @Min(0)
   costo_mensualidad: number;
-
-  @ApiProperty({ example: 1, required: false })
-  @IsInt()
-  @IsPositive()
-  @IsOptional()
-  especialidad_id?: number;
 }

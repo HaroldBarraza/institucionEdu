@@ -7,15 +7,12 @@ import { UpdateMateriaDto } from './dto/update-materia.dto.js';
 export class MateriaService {
     constructor(private readonly prisma:PrismaService){}
     findAll(){
-        return this.prisma.materia.findMany({
-            include:{especialidad:true}
-        })
+        return this.prisma.materia.findMany()
     }
     async fidOne(id:number){
         const materia = await this.prisma.materia.findUnique({
             where:{id_materia: id},
             include:{
-                especialidad:true,
                 grupos:true
             }
         })
@@ -27,9 +24,6 @@ export class MateriaService {
     async create(dto:CreateMateriaDto){
         return this.prisma.materia.create({
             data:dto,
-            include:{
-                especialidad:true
-            }
         })
     }
     async update(id:number, dto:UpdateMateriaDto){
@@ -37,9 +31,6 @@ export class MateriaService {
         return this.prisma.materia.update({
             where:{id_materia: id},
             data:dto,
-            include:{
-                especialidad:true
-            }
         })
     }
 }
