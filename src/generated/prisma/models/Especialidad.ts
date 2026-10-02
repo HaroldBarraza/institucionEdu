@@ -201,7 +201,6 @@ export type EspecialidadWhereInput = {
   nombre?: Prisma.StringFilter<"Especialidad"> | string
   descripcion?: Prisma.StringNullableFilter<"Especialidad"> | string | null
   docentes?: Prisma.DocenteListRelationFilter
-  materias?: Prisma.MateriaListRelationFilter
 }
 
 export type EspecialidadOrderByWithRelationInput = {
@@ -209,7 +208,6 @@ export type EspecialidadOrderByWithRelationInput = {
   nombre?: Prisma.SortOrder
   descripcion?: Prisma.SortOrderInput | Prisma.SortOrder
   docentes?: Prisma.DocenteOrderByRelationAggregateInput
-  materias?: Prisma.MateriaOrderByRelationAggregateInput
 }
 
 export type EspecialidadWhereUniqueInput = Prisma.AtLeast<{
@@ -220,7 +218,6 @@ export type EspecialidadWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.EspecialidadWhereInput | Prisma.EspecialidadWhereInput[]
   descripcion?: Prisma.StringNullableFilter<"Especialidad"> | string | null
   docentes?: Prisma.DocenteListRelationFilter
-  materias?: Prisma.MateriaListRelationFilter
 }, "id_especialidad" | "nombre">
 
 export type EspecialidadOrderByWithAggregationInput = {
@@ -247,7 +244,6 @@ export type EspecialidadCreateInput = {
   nombre: string
   descripcion?: string | null
   docentes?: Prisma.DocenteCreateNestedManyWithoutEspecialidadInput
-  materias?: Prisma.MateriaCreateNestedManyWithoutEspecialidadInput
 }
 
 export type EspecialidadUncheckedCreateInput = {
@@ -255,14 +251,12 @@ export type EspecialidadUncheckedCreateInput = {
   nombre: string
   descripcion?: string | null
   docentes?: Prisma.DocenteUncheckedCreateNestedManyWithoutEspecialidadInput
-  materias?: Prisma.MateriaUncheckedCreateNestedManyWithoutEspecialidadInput
 }
 
 export type EspecialidadUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   docentes?: Prisma.DocenteUpdateManyWithoutEspecialidadNestedInput
-  materias?: Prisma.MateriaUpdateManyWithoutEspecialidadNestedInput
 }
 
 export type EspecialidadUncheckedUpdateInput = {
@@ -270,7 +264,6 @@ export type EspecialidadUncheckedUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   docentes?: Prisma.DocenteUncheckedUpdateManyWithoutEspecialidadNestedInput
-  materias?: Prisma.MateriaUncheckedUpdateManyWithoutEspecialidadNestedInput
 }
 
 export type EspecialidadCreateManyInput = {
@@ -321,11 +314,6 @@ export type EspecialidadSumOrderByAggregateInput = {
   id_especialidad?: Prisma.SortOrder
 }
 
-export type EspecialidadNullableScalarRelationFilter = {
-  is?: Prisma.EspecialidadWhereInput | null
-  isNot?: Prisma.EspecialidadWhereInput | null
-}
-
 export type EspecialidadCreateNestedOneWithoutDocentesInput = {
   create?: Prisma.XOR<Prisma.EspecialidadCreateWithoutDocentesInput, Prisma.EspecialidadUncheckedCreateWithoutDocentesInput>
   connectOrCreate?: Prisma.EspecialidadCreateOrConnectWithoutDocentesInput
@@ -344,33 +332,15 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
-export type EspecialidadCreateNestedOneWithoutMateriasInput = {
-  create?: Prisma.XOR<Prisma.EspecialidadCreateWithoutMateriasInput, Prisma.EspecialidadUncheckedCreateWithoutMateriasInput>
-  connectOrCreate?: Prisma.EspecialidadCreateOrConnectWithoutMateriasInput
-  connect?: Prisma.EspecialidadWhereUniqueInput
-}
-
-export type EspecialidadUpdateOneWithoutMateriasNestedInput = {
-  create?: Prisma.XOR<Prisma.EspecialidadCreateWithoutMateriasInput, Prisma.EspecialidadUncheckedCreateWithoutMateriasInput>
-  connectOrCreate?: Prisma.EspecialidadCreateOrConnectWithoutMateriasInput
-  upsert?: Prisma.EspecialidadUpsertWithoutMateriasInput
-  disconnect?: Prisma.EspecialidadWhereInput | boolean
-  delete?: Prisma.EspecialidadWhereInput | boolean
-  connect?: Prisma.EspecialidadWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.EspecialidadUpdateToOneWithWhereWithoutMateriasInput, Prisma.EspecialidadUpdateWithoutMateriasInput>, Prisma.EspecialidadUncheckedUpdateWithoutMateriasInput>
-}
-
 export type EspecialidadCreateWithoutDocentesInput = {
   nombre: string
   descripcion?: string | null
-  materias?: Prisma.MateriaCreateNestedManyWithoutEspecialidadInput
 }
 
 export type EspecialidadUncheckedCreateWithoutDocentesInput = {
   id_especialidad?: number
   nombre: string
   descripcion?: string | null
-  materias?: Prisma.MateriaUncheckedCreateNestedManyWithoutEspecialidadInput
 }
 
 export type EspecialidadCreateOrConnectWithoutDocentesInput = {
@@ -392,56 +362,12 @@ export type EspecialidadUpdateToOneWithWhereWithoutDocentesInput = {
 export type EspecialidadUpdateWithoutDocentesInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  materias?: Prisma.MateriaUpdateManyWithoutEspecialidadNestedInput
 }
 
 export type EspecialidadUncheckedUpdateWithoutDocentesInput = {
   id_especialidad?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  materias?: Prisma.MateriaUncheckedUpdateManyWithoutEspecialidadNestedInput
-}
-
-export type EspecialidadCreateWithoutMateriasInput = {
-  nombre: string
-  descripcion?: string | null
-  docentes?: Prisma.DocenteCreateNestedManyWithoutEspecialidadInput
-}
-
-export type EspecialidadUncheckedCreateWithoutMateriasInput = {
-  id_especialidad?: number
-  nombre: string
-  descripcion?: string | null
-  docentes?: Prisma.DocenteUncheckedCreateNestedManyWithoutEspecialidadInput
-}
-
-export type EspecialidadCreateOrConnectWithoutMateriasInput = {
-  where: Prisma.EspecialidadWhereUniqueInput
-  create: Prisma.XOR<Prisma.EspecialidadCreateWithoutMateriasInput, Prisma.EspecialidadUncheckedCreateWithoutMateriasInput>
-}
-
-export type EspecialidadUpsertWithoutMateriasInput = {
-  update: Prisma.XOR<Prisma.EspecialidadUpdateWithoutMateriasInput, Prisma.EspecialidadUncheckedUpdateWithoutMateriasInput>
-  create: Prisma.XOR<Prisma.EspecialidadCreateWithoutMateriasInput, Prisma.EspecialidadUncheckedCreateWithoutMateriasInput>
-  where?: Prisma.EspecialidadWhereInput
-}
-
-export type EspecialidadUpdateToOneWithWhereWithoutMateriasInput = {
-  where?: Prisma.EspecialidadWhereInput
-  data: Prisma.XOR<Prisma.EspecialidadUpdateWithoutMateriasInput, Prisma.EspecialidadUncheckedUpdateWithoutMateriasInput>
-}
-
-export type EspecialidadUpdateWithoutMateriasInput = {
-  nombre?: Prisma.StringFieldUpdateOperationsInput | string
-  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  docentes?: Prisma.DocenteUpdateManyWithoutEspecialidadNestedInput
-}
-
-export type EspecialidadUncheckedUpdateWithoutMateriasInput = {
-  id_especialidad?: Prisma.IntFieldUpdateOperationsInput | number
-  nombre?: Prisma.StringFieldUpdateOperationsInput | string
-  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  docentes?: Prisma.DocenteUncheckedUpdateManyWithoutEspecialidadNestedInput
 }
 
 
@@ -451,12 +377,10 @@ export type EspecialidadUncheckedUpdateWithoutMateriasInput = {
 
 export type EspecialidadCountOutputType = {
   docentes: number
-  materias: number
 }
 
 export type EspecialidadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   docentes?: boolean | EspecialidadCountOutputTypeCountDocentesArgs
-  materias?: boolean | EspecialidadCountOutputTypeCountMateriasArgs
 }
 
 /**
@@ -476,20 +400,12 @@ export type EspecialidadCountOutputTypeCountDocentesArgs<ExtArgs extends runtime
   where?: Prisma.DocenteWhereInput
 }
 
-/**
- * EspecialidadCountOutputType without action
- */
-export type EspecialidadCountOutputTypeCountMateriasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MateriaWhereInput
-}
-
 
 export type EspecialidadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_especialidad?: boolean
   nombre?: boolean
   descripcion?: boolean
   docentes?: boolean | Prisma.Especialidad$docentesArgs<ExtArgs>
-  materias?: boolean | Prisma.Especialidad$materiasArgs<ExtArgs>
   _count?: boolean | Prisma.EspecialidadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["especialidad"]>
 
@@ -514,7 +430,6 @@ export type EspecialidadSelectScalar = {
 export type EspecialidadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_especialidad" | "nombre" | "descripcion", ExtArgs["result"]["especialidad"]>
 export type EspecialidadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   docentes?: boolean | Prisma.Especialidad$docentesArgs<ExtArgs>
-  materias?: boolean | Prisma.Especialidad$materiasArgs<ExtArgs>
   _count?: boolean | Prisma.EspecialidadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type EspecialidadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -524,7 +439,6 @@ export type $EspecialidadPayload<ExtArgs extends runtime.Types.Extensions.Intern
   name: "Especialidad"
   objects: {
     docentes: Prisma.$DocentePayload<ExtArgs>[]
-    materias: Prisma.$MateriaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_especialidad: number
@@ -925,7 +839,6 @@ readonly fields: EspecialidadFieldRefs;
 export interface Prisma__EspecialidadClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   docentes<T extends Prisma.Especialidad$docentesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Especialidad$docentesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocentePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  materias<T extends Prisma.Especialidad$materiasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Especialidad$materiasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MateriaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1372,30 +1285,6 @@ export type Especialidad$docentesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.DocenteScalarFieldEnum | Prisma.DocenteScalarFieldEnum[]
-}
-
-/**
- * Especialidad.materias
- */
-export type Especialidad$materiasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Materia
-   */
-  select?: Prisma.MateriaSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Materia
-   */
-  omit?: Prisma.MateriaOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MateriaInclude<ExtArgs> | null
-  where?: Prisma.MateriaWhereInput
-  orderBy?: Prisma.MateriaOrderByWithRelationInput | Prisma.MateriaOrderByWithRelationInput[]
-  cursor?: Prisma.MateriaWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MateriaScalarFieldEnum | Prisma.MateriaScalarFieldEnum[]
 }
 
 /**

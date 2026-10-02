@@ -145,8 +145,7 @@ export const MateriaScalarFieldEnum = {
   nombre: 'nombre',
   creditos: 'creditos',
   costo_inscripcion: 'costo_inscripcion',
-  costo_mensualidad: 'costo_mensualidad',
-  especialidad_id: 'especialidad_id'
+  costo_mensualidad: 'costo_mensualidad'
 } as const
 
 export type MateriaScalarFieldEnum = (typeof MateriaScalarFieldEnum)[keyof typeof MateriaScalarFieldEnum]

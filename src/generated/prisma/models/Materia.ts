@@ -31,7 +31,6 @@ export type MateriaAvgAggregateOutputType = {
   creditos: number | null
   costo_inscripcion: runtime.Decimal | null
   costo_mensualidad: runtime.Decimal | null
-  especialidad_id: number | null
 }
 
 export type MateriaSumAggregateOutputType = {
@@ -39,7 +38,6 @@ export type MateriaSumAggregateOutputType = {
   creditos: number | null
   costo_inscripcion: runtime.Decimal | null
   costo_mensualidad: runtime.Decimal | null
-  especialidad_id: number | null
 }
 
 export type MateriaMinAggregateOutputType = {
@@ -48,7 +46,6 @@ export type MateriaMinAggregateOutputType = {
   creditos: number | null
   costo_inscripcion: runtime.Decimal | null
   costo_mensualidad: runtime.Decimal | null
-  especialidad_id: number | null
 }
 
 export type MateriaMaxAggregateOutputType = {
@@ -57,7 +54,6 @@ export type MateriaMaxAggregateOutputType = {
   creditos: number | null
   costo_inscripcion: runtime.Decimal | null
   costo_mensualidad: runtime.Decimal | null
-  especialidad_id: number | null
 }
 
 export type MateriaCountAggregateOutputType = {
@@ -66,7 +62,6 @@ export type MateriaCountAggregateOutputType = {
   creditos: number
   costo_inscripcion: number
   costo_mensualidad: number
-  especialidad_id: number
   _all: number
 }
 
@@ -76,7 +71,6 @@ export type MateriaAvgAggregateInputType = {
   creditos?: true
   costo_inscripcion?: true
   costo_mensualidad?: true
-  especialidad_id?: true
 }
 
 export type MateriaSumAggregateInputType = {
@@ -84,7 +78,6 @@ export type MateriaSumAggregateInputType = {
   creditos?: true
   costo_inscripcion?: true
   costo_mensualidad?: true
-  especialidad_id?: true
 }
 
 export type MateriaMinAggregateInputType = {
@@ -93,7 +86,6 @@ export type MateriaMinAggregateInputType = {
   creditos?: true
   costo_inscripcion?: true
   costo_mensualidad?: true
-  especialidad_id?: true
 }
 
 export type MateriaMaxAggregateInputType = {
@@ -102,7 +94,6 @@ export type MateriaMaxAggregateInputType = {
   creditos?: true
   costo_inscripcion?: true
   costo_mensualidad?: true
-  especialidad_id?: true
 }
 
 export type MateriaCountAggregateInputType = {
@@ -111,7 +102,6 @@ export type MateriaCountAggregateInputType = {
   creditos?: true
   costo_inscripcion?: true
   costo_mensualidad?: true
-  especialidad_id?: true
   _all?: true
 }
 
@@ -207,7 +197,6 @@ export type MateriaGroupByOutputType = {
   creditos: number
   costo_inscripcion: runtime.Decimal
   costo_mensualidad: runtime.Decimal
-  especialidad_id: number | null
   _count: MateriaCountAggregateOutputType | null
   _avg: MateriaAvgAggregateOutputType | null
   _sum: MateriaSumAggregateOutputType | null
@@ -239,8 +228,6 @@ export type MateriaWhereInput = {
   creditos?: Prisma.IntFilter<"Materia"> | number
   costo_inscripcion?: Prisma.DecimalFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad?: Prisma.DecimalFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: Prisma.IntNullableFilter<"Materia"> | number | null
-  especialidad?: Prisma.XOR<Prisma.EspecialidadNullableScalarRelationFilter, Prisma.EspecialidadWhereInput> | null
   grupos?: Prisma.GrupoListRelationFilter
 }
 
@@ -250,8 +237,6 @@ export type MateriaOrderByWithRelationInput = {
   creditos?: Prisma.SortOrder
   costo_inscripcion?: Prisma.SortOrder
   costo_mensualidad?: Prisma.SortOrder
-  especialidad_id?: Prisma.SortOrderInput | Prisma.SortOrder
-  especialidad?: Prisma.EspecialidadOrderByWithRelationInput
   grupos?: Prisma.GrupoOrderByRelationAggregateInput
 }
 
@@ -264,8 +249,6 @@ export type MateriaWhereUniqueInput = Prisma.AtLeast<{
   creditos?: Prisma.IntFilter<"Materia"> | number
   costo_inscripcion?: Prisma.DecimalFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad?: Prisma.DecimalFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: Prisma.IntNullableFilter<"Materia"> | number | null
-  especialidad?: Prisma.XOR<Prisma.EspecialidadNullableScalarRelationFilter, Prisma.EspecialidadWhereInput> | null
   grupos?: Prisma.GrupoListRelationFilter
 }, "id_materia">
 
@@ -275,7 +258,6 @@ export type MateriaOrderByWithAggregationInput = {
   creditos?: Prisma.SortOrder
   costo_inscripcion?: Prisma.SortOrder
   costo_mensualidad?: Prisma.SortOrder
-  especialidad_id?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MateriaCountOrderByAggregateInput
   _avg?: Prisma.MateriaAvgOrderByAggregateInput
   _max?: Prisma.MateriaMaxOrderByAggregateInput
@@ -292,7 +274,6 @@ export type MateriaScalarWhereWithAggregatesInput = {
   creditos?: Prisma.IntWithAggregatesFilter<"Materia"> | number
   costo_inscripcion?: Prisma.DecimalWithAggregatesFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad?: Prisma.DecimalWithAggregatesFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: Prisma.IntNullableWithAggregatesFilter<"Materia"> | number | null
 }
 
 export type MateriaCreateInput = {
@@ -300,7 +281,6 @@ export type MateriaCreateInput = {
   creditos: number
   costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad?: Prisma.EspecialidadCreateNestedOneWithoutMateriasInput
   grupos?: Prisma.GrupoCreateNestedManyWithoutMateriaInput
 }
 
@@ -310,7 +290,6 @@ export type MateriaUncheckedCreateInput = {
   creditos: number
   costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: number | null
   grupos?: Prisma.GrupoUncheckedCreateNestedManyWithoutMateriaInput
 }
 
@@ -319,7 +298,6 @@ export type MateriaUpdateInput = {
   creditos?: Prisma.IntFieldUpdateOperationsInput | number
   costo_inscripcion?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad?: Prisma.EspecialidadUpdateOneWithoutMateriasNestedInput
   grupos?: Prisma.GrupoUpdateManyWithoutMateriaNestedInput
 }
 
@@ -329,7 +307,6 @@ export type MateriaUncheckedUpdateInput = {
   creditos?: Prisma.IntFieldUpdateOperationsInput | number
   costo_inscripcion?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   grupos?: Prisma.GrupoUncheckedUpdateManyWithoutMateriaNestedInput
 }
 
@@ -339,7 +316,6 @@ export type MateriaCreateManyInput = {
   creditos: number
   costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: number | null
 }
 
 export type MateriaUpdateManyMutationInput = {
@@ -355,17 +331,6 @@ export type MateriaUncheckedUpdateManyInput = {
   creditos?: Prisma.IntFieldUpdateOperationsInput | number
   costo_inscripcion?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-}
-
-export type MateriaListRelationFilter = {
-  every?: Prisma.MateriaWhereInput
-  some?: Prisma.MateriaWhereInput
-  none?: Prisma.MateriaWhereInput
-}
-
-export type MateriaOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
 }
 
 export type MateriaCountOrderByAggregateInput = {
@@ -374,7 +339,6 @@ export type MateriaCountOrderByAggregateInput = {
   creditos?: Prisma.SortOrder
   costo_inscripcion?: Prisma.SortOrder
   costo_mensualidad?: Prisma.SortOrder
-  especialidad_id?: Prisma.SortOrder
 }
 
 export type MateriaAvgOrderByAggregateInput = {
@@ -382,7 +346,6 @@ export type MateriaAvgOrderByAggregateInput = {
   creditos?: Prisma.SortOrder
   costo_inscripcion?: Prisma.SortOrder
   costo_mensualidad?: Prisma.SortOrder
-  especialidad_id?: Prisma.SortOrder
 }
 
 export type MateriaMaxOrderByAggregateInput = {
@@ -391,7 +354,6 @@ export type MateriaMaxOrderByAggregateInput = {
   creditos?: Prisma.SortOrder
   costo_inscripcion?: Prisma.SortOrder
   costo_mensualidad?: Prisma.SortOrder
-  especialidad_id?: Prisma.SortOrder
 }
 
 export type MateriaMinOrderByAggregateInput = {
@@ -400,7 +362,6 @@ export type MateriaMinOrderByAggregateInput = {
   creditos?: Prisma.SortOrder
   costo_inscripcion?: Prisma.SortOrder
   costo_mensualidad?: Prisma.SortOrder
-  especialidad_id?: Prisma.SortOrder
 }
 
 export type MateriaSumOrderByAggregateInput = {
@@ -408,54 +369,11 @@ export type MateriaSumOrderByAggregateInput = {
   creditos?: Prisma.SortOrder
   costo_inscripcion?: Prisma.SortOrder
   costo_mensualidad?: Prisma.SortOrder
-  especialidad_id?: Prisma.SortOrder
 }
 
 export type MateriaScalarRelationFilter = {
   is?: Prisma.MateriaWhereInput
   isNot?: Prisma.MateriaWhereInput
-}
-
-export type MateriaCreateNestedManyWithoutEspecialidadInput = {
-  create?: Prisma.XOR<Prisma.MateriaCreateWithoutEspecialidadInput, Prisma.MateriaUncheckedCreateWithoutEspecialidadInput> | Prisma.MateriaCreateWithoutEspecialidadInput[] | Prisma.MateriaUncheckedCreateWithoutEspecialidadInput[]
-  connectOrCreate?: Prisma.MateriaCreateOrConnectWithoutEspecialidadInput | Prisma.MateriaCreateOrConnectWithoutEspecialidadInput[]
-  createMany?: Prisma.MateriaCreateManyEspecialidadInputEnvelope
-  connect?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-}
-
-export type MateriaUncheckedCreateNestedManyWithoutEspecialidadInput = {
-  create?: Prisma.XOR<Prisma.MateriaCreateWithoutEspecialidadInput, Prisma.MateriaUncheckedCreateWithoutEspecialidadInput> | Prisma.MateriaCreateWithoutEspecialidadInput[] | Prisma.MateriaUncheckedCreateWithoutEspecialidadInput[]
-  connectOrCreate?: Prisma.MateriaCreateOrConnectWithoutEspecialidadInput | Prisma.MateriaCreateOrConnectWithoutEspecialidadInput[]
-  createMany?: Prisma.MateriaCreateManyEspecialidadInputEnvelope
-  connect?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-}
-
-export type MateriaUpdateManyWithoutEspecialidadNestedInput = {
-  create?: Prisma.XOR<Prisma.MateriaCreateWithoutEspecialidadInput, Prisma.MateriaUncheckedCreateWithoutEspecialidadInput> | Prisma.MateriaCreateWithoutEspecialidadInput[] | Prisma.MateriaUncheckedCreateWithoutEspecialidadInput[]
-  connectOrCreate?: Prisma.MateriaCreateOrConnectWithoutEspecialidadInput | Prisma.MateriaCreateOrConnectWithoutEspecialidadInput[]
-  upsert?: Prisma.MateriaUpsertWithWhereUniqueWithoutEspecialidadInput | Prisma.MateriaUpsertWithWhereUniqueWithoutEspecialidadInput[]
-  createMany?: Prisma.MateriaCreateManyEspecialidadInputEnvelope
-  set?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  disconnect?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  delete?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  connect?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  update?: Prisma.MateriaUpdateWithWhereUniqueWithoutEspecialidadInput | Prisma.MateriaUpdateWithWhereUniqueWithoutEspecialidadInput[]
-  updateMany?: Prisma.MateriaUpdateManyWithWhereWithoutEspecialidadInput | Prisma.MateriaUpdateManyWithWhereWithoutEspecialidadInput[]
-  deleteMany?: Prisma.MateriaScalarWhereInput | Prisma.MateriaScalarWhereInput[]
-}
-
-export type MateriaUncheckedUpdateManyWithoutEspecialidadNestedInput = {
-  create?: Prisma.XOR<Prisma.MateriaCreateWithoutEspecialidadInput, Prisma.MateriaUncheckedCreateWithoutEspecialidadInput> | Prisma.MateriaCreateWithoutEspecialidadInput[] | Prisma.MateriaUncheckedCreateWithoutEspecialidadInput[]
-  connectOrCreate?: Prisma.MateriaCreateOrConnectWithoutEspecialidadInput | Prisma.MateriaCreateOrConnectWithoutEspecialidadInput[]
-  upsert?: Prisma.MateriaUpsertWithWhereUniqueWithoutEspecialidadInput | Prisma.MateriaUpsertWithWhereUniqueWithoutEspecialidadInput[]
-  createMany?: Prisma.MateriaCreateManyEspecialidadInputEnvelope
-  set?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  disconnect?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  delete?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  connect?: Prisma.MateriaWhereUniqueInput | Prisma.MateriaWhereUniqueInput[]
-  update?: Prisma.MateriaUpdateWithWhereUniqueWithoutEspecialidadInput | Prisma.MateriaUpdateWithWhereUniqueWithoutEspecialidadInput[]
-  updateMany?: Prisma.MateriaUpdateManyWithWhereWithoutEspecialidadInput | Prisma.MateriaUpdateManyWithWhereWithoutEspecialidadInput[]
-  deleteMany?: Prisma.MateriaScalarWhereInput | Prisma.MateriaScalarWhereInput[]
 }
 
 export type DecimalFieldUpdateOperationsInput = {
@@ -480,67 +398,11 @@ export type MateriaUpdateOneRequiredWithoutGruposNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MateriaUpdateToOneWithWhereWithoutGruposInput, Prisma.MateriaUpdateWithoutGruposInput>, Prisma.MateriaUncheckedUpdateWithoutGruposInput>
 }
 
-export type MateriaCreateWithoutEspecialidadInput = {
-  nombre: string
-  creditos: number
-  costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
-  costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-  grupos?: Prisma.GrupoCreateNestedManyWithoutMateriaInput
-}
-
-export type MateriaUncheckedCreateWithoutEspecialidadInput = {
-  id_materia?: number
-  nombre: string
-  creditos: number
-  costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
-  costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-  grupos?: Prisma.GrupoUncheckedCreateNestedManyWithoutMateriaInput
-}
-
-export type MateriaCreateOrConnectWithoutEspecialidadInput = {
-  where: Prisma.MateriaWhereUniqueInput
-  create: Prisma.XOR<Prisma.MateriaCreateWithoutEspecialidadInput, Prisma.MateriaUncheckedCreateWithoutEspecialidadInput>
-}
-
-export type MateriaCreateManyEspecialidadInputEnvelope = {
-  data: Prisma.MateriaCreateManyEspecialidadInput | Prisma.MateriaCreateManyEspecialidadInput[]
-  skipDuplicates?: boolean
-}
-
-export type MateriaUpsertWithWhereUniqueWithoutEspecialidadInput = {
-  where: Prisma.MateriaWhereUniqueInput
-  update: Prisma.XOR<Prisma.MateriaUpdateWithoutEspecialidadInput, Prisma.MateriaUncheckedUpdateWithoutEspecialidadInput>
-  create: Prisma.XOR<Prisma.MateriaCreateWithoutEspecialidadInput, Prisma.MateriaUncheckedCreateWithoutEspecialidadInput>
-}
-
-export type MateriaUpdateWithWhereUniqueWithoutEspecialidadInput = {
-  where: Prisma.MateriaWhereUniqueInput
-  data: Prisma.XOR<Prisma.MateriaUpdateWithoutEspecialidadInput, Prisma.MateriaUncheckedUpdateWithoutEspecialidadInput>
-}
-
-export type MateriaUpdateManyWithWhereWithoutEspecialidadInput = {
-  where: Prisma.MateriaScalarWhereInput
-  data: Prisma.XOR<Prisma.MateriaUpdateManyMutationInput, Prisma.MateriaUncheckedUpdateManyWithoutEspecialidadInput>
-}
-
-export type MateriaScalarWhereInput = {
-  AND?: Prisma.MateriaScalarWhereInput | Prisma.MateriaScalarWhereInput[]
-  OR?: Prisma.MateriaScalarWhereInput[]
-  NOT?: Prisma.MateriaScalarWhereInput | Prisma.MateriaScalarWhereInput[]
-  id_materia?: Prisma.IntFilter<"Materia"> | number
-  nombre?: Prisma.StringFilter<"Materia"> | string
-  creditos?: Prisma.IntFilter<"Materia"> | number
-  costo_inscripcion?: Prisma.DecimalFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  costo_mensualidad?: Prisma.DecimalFilter<"Materia"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: Prisma.IntNullableFilter<"Materia"> | number | null
-}
-
 export type MateriaCreateWithoutGruposInput = {
   nombre: string
   creditos: number
   costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad?: Prisma.EspecialidadCreateNestedOneWithoutMateriasInput
 }
 
 export type MateriaUncheckedCreateWithoutGruposInput = {
@@ -549,7 +411,6 @@ export type MateriaUncheckedCreateWithoutGruposInput = {
   creditos: number
   costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: number | null
 }
 
 export type MateriaCreateOrConnectWithoutGruposInput = {
@@ -573,44 +434,9 @@ export type MateriaUpdateWithoutGruposInput = {
   creditos?: Prisma.IntFieldUpdateOperationsInput | number
   costo_inscripcion?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   costo_mensualidad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad?: Prisma.EspecialidadUpdateOneWithoutMateriasNestedInput
 }
 
 export type MateriaUncheckedUpdateWithoutGruposInput = {
-  id_materia?: Prisma.IntFieldUpdateOperationsInput | number
-  nombre?: Prisma.StringFieldUpdateOperationsInput | string
-  creditos?: Prisma.IntFieldUpdateOperationsInput | number
-  costo_inscripcion?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  costo_mensualidad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  especialidad_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-}
-
-export type MateriaCreateManyEspecialidadInput = {
-  id_materia?: number
-  nombre: string
-  creditos: number
-  costo_inscripcion: runtime.Decimal | runtime.DecimalJsLike | number | string
-  costo_mensualidad: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
-export type MateriaUpdateWithoutEspecialidadInput = {
-  nombre?: Prisma.StringFieldUpdateOperationsInput | string
-  creditos?: Prisma.IntFieldUpdateOperationsInput | number
-  costo_inscripcion?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  costo_mensualidad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  grupos?: Prisma.GrupoUpdateManyWithoutMateriaNestedInput
-}
-
-export type MateriaUncheckedUpdateWithoutEspecialidadInput = {
-  id_materia?: Prisma.IntFieldUpdateOperationsInput | number
-  nombre?: Prisma.StringFieldUpdateOperationsInput | string
-  creditos?: Prisma.IntFieldUpdateOperationsInput | number
-  costo_inscripcion?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  costo_mensualidad?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  grupos?: Prisma.GrupoUncheckedUpdateManyWithoutMateriaNestedInput
-}
-
-export type MateriaUncheckedUpdateManyWithoutEspecialidadInput = {
   id_materia?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   creditos?: Prisma.IntFieldUpdateOperationsInput | number
@@ -655,8 +481,6 @@ export type MateriaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   creditos?: boolean
   costo_inscripcion?: boolean
   costo_mensualidad?: boolean
-  especialidad_id?: boolean
-  especialidad?: boolean | Prisma.Materia$especialidadArgs<ExtArgs>
   grupos?: boolean | Prisma.Materia$gruposArgs<ExtArgs>
   _count?: boolean | Prisma.MateriaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["materia"]>
@@ -667,8 +491,6 @@ export type MateriaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   creditos?: boolean
   costo_inscripcion?: boolean
   costo_mensualidad?: boolean
-  especialidad_id?: boolean
-  especialidad?: boolean | Prisma.Materia$especialidadArgs<ExtArgs>
 }, ExtArgs["result"]["materia"]>
 
 export type MateriaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -677,8 +499,6 @@ export type MateriaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   creditos?: boolean
   costo_inscripcion?: boolean
   costo_mensualidad?: boolean
-  especialidad_id?: boolean
-  especialidad?: boolean | Prisma.Materia$especialidadArgs<ExtArgs>
 }, ExtArgs["result"]["materia"]>
 
 export type MateriaSelectScalar = {
@@ -687,26 +507,19 @@ export type MateriaSelectScalar = {
   creditos?: boolean
   costo_inscripcion?: boolean
   costo_mensualidad?: boolean
-  especialidad_id?: boolean
 }
 
-export type MateriaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_materia" | "nombre" | "creditos" | "costo_inscripcion" | "costo_mensualidad" | "especialidad_id", ExtArgs["result"]["materia"]>
+export type MateriaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_materia" | "nombre" | "creditos" | "costo_inscripcion" | "costo_mensualidad", ExtArgs["result"]["materia"]>
 export type MateriaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  especialidad?: boolean | Prisma.Materia$especialidadArgs<ExtArgs>
   grupos?: boolean | Prisma.Materia$gruposArgs<ExtArgs>
   _count?: boolean | Prisma.MateriaCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type MateriaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  especialidad?: boolean | Prisma.Materia$especialidadArgs<ExtArgs>
-}
-export type MateriaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  especialidad?: boolean | Prisma.Materia$especialidadArgs<ExtArgs>
-}
+export type MateriaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type MateriaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $MateriaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Materia"
   objects: {
-    especialidad: Prisma.$EspecialidadPayload<ExtArgs> | null
     grupos: Prisma.$GrupoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -715,7 +528,6 @@ export type $MateriaPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     creditos: number
     costo_inscripcion: runtime.Decimal
     costo_mensualidad: runtime.Decimal
-    especialidad_id: number | null
   }, ExtArgs["result"]["materia"]>
   composites: {}
 }
@@ -1110,7 +922,6 @@ readonly fields: MateriaFieldRefs;
  */
 export interface Prisma__MateriaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  especialidad<T extends Prisma.Materia$especialidadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Materia$especialidadArgs<ExtArgs>>): Prisma.Prisma__EspecialidadClient<runtime.Types.Result.GetResult<Prisma.$EspecialidadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   grupos<T extends Prisma.Materia$gruposArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Materia$gruposArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GrupoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1146,7 +957,6 @@ export interface MateriaFieldRefs {
   readonly creditos: Prisma.FieldRef<"Materia", 'Int'>
   readonly costo_inscripcion: Prisma.FieldRef<"Materia", 'Decimal'>
   readonly costo_mensualidad: Prisma.FieldRef<"Materia", 'Decimal'>
-  readonly especialidad_id: Prisma.FieldRef<"Materia", 'Int'>
 }
     
 
@@ -1401,10 +1211,6 @@ export type MateriaCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    */
   data: Prisma.MateriaCreateManyInput | Prisma.MateriaCreateManyInput[]
   skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MateriaIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1475,10 +1281,6 @@ export type MateriaUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many Materias to update.
    */
   limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MateriaIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1545,25 +1347,6 @@ export type MateriaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Materias to delete.
    */
   limit?: number
-}
-
-/**
- * Materia.especialidad
- */
-export type Materia$especialidadArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Especialidad
-   */
-  select?: Prisma.EspecialidadSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Especialidad
-   */
-  omit?: Prisma.EspecialidadOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.EspecialidadInclude<ExtArgs> | null
-  where?: Prisma.EspecialidadWhereInput
 }
 
 /**
