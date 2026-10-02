@@ -580,8 +580,8 @@ async function main() {
       { grupo_id: 5, dia_semana: Dias.MARTES, hora_inicio: new Date("1970-01-01T08:00:00Z"), hora_fin: new Date("1970-01-01T10:00:00Z") },
       { grupo_id: 5, dia_semana: Dias.JUEVES, hora_inicio: new Date("1970-01-01T08:00:00Z"), hora_fin: new Date("1970-01-01T10:00:00Z") },
       // Grupo 6: Inglés A — Lunes y Miércoles 14-16
-      { grupo_id: 6, dia_semana: Dias.LUNES, hora_inicio: new Date("1970-01-01T14:00:00Z"), hora_fin: new Date("1970-01-01T16:00:00Z") },
-      { grupo_id: 6, dia_semana: Dias.MIERCOLES, hora_inicio: new Date("1970-01-01T14:00:00Z"), hora_fin: new Date("1970-01-01T16:00:00Z") },
+      { grupo_id: 6, dia_semana: Dias.LUNES, hora_inicio: new Date("1970-01-01T08:00:00Z"), hora_fin: new Date("1970-01-01T08:00:00Z") },
+      { grupo_id: 6, dia_semana: Dias.MIERCOLES, hora_inicio: new Date("1970-01-01T10:00:00Z"), hora_fin: new Date("1970-01-01T10:00:00Z") },
       // Grupo 7: Programación A — Martes y Jueves 16-18
       { grupo_id: 7, dia_semana: Dias.MARTES, hora_inicio: new Date("1970-01-01T16:00:00Z"), hora_fin: new Date("1970-01-01T18:00:00Z") },
       { grupo_id: 7, dia_semana: Dias.JUEVES, hora_inicio: new Date("1970-01-01T16:00:00Z"), hora_fin: new Date("1970-01-01T18:00:00Z") },
