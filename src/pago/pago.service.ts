@@ -105,7 +105,6 @@ export class PagoService {
           estado: EstadoPago.ACEPTADO,
           fecha_verificacion: new Date(),
           verificado_por_usuario_id: user.sub,
-          obligacionestado: EstadoDeuda.PAGADO,
         }
       : {
           estado: EstadoPago.PENDIENTE,
