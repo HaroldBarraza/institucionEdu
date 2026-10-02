@@ -16,7 +16,7 @@ import { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 @Injectable()
 export class PagoService {
   constructor(private readonly prisma: PrismaService) {}
-/*   async findAll() {
+  /*   async findAll() {
     return await this.prisma.pago.findMany({
       include: {
         obligacion: {
@@ -75,7 +75,7 @@ export class PagoService {
     }
     return pago;
   }
-  async create(dto: CreatePagoDto, user:JwtPayload) {
+  async create(dto: CreatePagoDto, user: JwtPayload) {
     const obligacion = await this.prisma.obligacionFinanciera.findUnique({
       where: { id_obligacion: dto.obligacion_id },
     });
@@ -93,26 +93,43 @@ export class PagoService {
     if (dto.monto > Number(obligacion.monto)) {
       throw new BadRequestException(`el monto del pago supero a la deuda`);
     }
-    if(dto.monto < Number(obligacion.monto)){
-      throw new BadRequestException(`el monto del pago tiene que ser no menor a ${obligacion.monto}`)
+    if (dto.monto < Number(obligacion.monto)) {
+      throw new BadRequestException(
+        `el monto del pago tiene que ser no menor a ${obligacion.monto}`,
+      );
     }
-    const caja = dto.metodo === MetodoPago.CAJA 
-    
-    const datoApro = caja ? { 
-      estado: EstadoPago.ACEPTADO,
-      fecha_verificacion: new Date(),
-      verificado_por_usuario_id: user.sub
-    }:{
-      estado: EstadoPago.PENDIENTE,
-      fecha_verificacion: null,
-      verificado_por_usuario_id: null
-    }
+    const caja = dto.metodo === MetodoPago.CAJA;
 
-    return this.prisma.pago.create({
-      data: {...dto, ...datoApro},
-      include: {
-        obligacion: true,
-      },
+    const datoApro = caja
+      ? {
+          estado: EstadoPago.ACEPTADO,
+          fecha_verificacion: new Date(),
+          verificado_por_usuario_id: user.sub,
+          obligacionestado: EstadoDeuda.PAGADO,
+        }
+      : {
+          estado: EstadoPago.PENDIENTE,
+          fecha_verificacion: null,
+          verificado_por_usuario_id: null,
+        };
+
+    return this.prisma.$transaction(async (tx) => {
+      if (caja) {
+        await tx.obligacionFinanciera.update({
+          where: { id_obligacion: dto.obligacion_id },
+          data: { estado: EstadoDeuda.PAGADO },
+        });
+      }
+
+      return tx.pago.create({
+        data: {
+          ...dto,
+          ...datoApro,
+        },
+        include: {
+          obligacion: true,
+        },
+      });
     });
   }
   async aprobar(id: number, user: JwtPayload) {
@@ -173,43 +190,45 @@ export class PagoService {
       },
     });
   }
-  async filtrar(filtro: FiltroPagoDto = {}){
+  async filtrar(filtro: FiltroPagoDto = {}) {
     return this.prisma.pago.findMany({
-      where:{
-        obligacion:{
-          razon:filtro.razon
-        }
+      where: {
+        obligacion: {
+          razon: filtro.razon,
+        },
       },
-      include:{
-        obligacion:{
-          include:{
-            estudiante:{
-              include:{
-                usuario:{
-                  select:{
+      include: {
+        obligacion: {
+          include: {
+            estudiante: {
+              include: {
+                usuario: {
+                  select: {
                     id_usuario: true,
                     nombre: true,
-                    appaterno:true,
-                  }
-                }
-              }
-            },periodo:{
-              select:{
-                nombre:true,
-                year:true,
-                numero:true
-              }
-            }
-          }
-        },verificadoPorUsuario:{
-          select:{
-            id_usuario:true,
-            nombre:true,
-            appaterno:true,
-            rol:true
-          }
-        }
-      }
-    })
+                    appaterno: true,
+                  },
+                },
+              },
+            },
+            periodo: {
+              select: {
+                nombre: true,
+                year: true,
+                numero: true,
+              },
+            },
+          },
+        },
+        verificadoPorUsuario: {
+          select: {
+            id_usuario: true,
+            nombre: true,
+            appaterno: true,
+            rol: true,
+          },
+        },
+      },
+    });
   }
 }

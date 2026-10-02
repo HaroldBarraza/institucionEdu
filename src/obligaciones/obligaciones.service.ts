@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateObligacionDto } from './dto/create-obligacion.dto.js';
 import { CambiarEstadoObligacionDto } from './dto/cambiar-estado-obligacion.dto.js';
 import { EstadoDeuda, EstadoUsuario } from '../generated/prisma/enums.js';
 import { Role } from '../generated/prisma/enums.js';
-
 
 @Injectable()
 export class ObligacionesService {
@@ -52,80 +55,91 @@ export class ObligacionesService {
         pagos: true,
       },
     });
-    if(!obligacion){
-        throw new NotFoundException(`la obligacion con id ${id} no existe`)
+    if (!obligacion) {
+      throw new NotFoundException(`la obligacion con id ${id} no existe`);
     }
-    return obligacion
+    return obligacion;
   }
-  async create(dto:CreateObligacionDto){
+  async create(dto: CreateObligacionDto) {
     return this.prisma.obligacionFinanciera.create({
-        data:dto,
-        include:{
-            estudiante:{
-                include:{
-                    usuario:true
-                }
-            },periodo:true
-        }
-    })
+      data: dto,
+      include: {
+        estudiante: {
+          include: {
+            usuario: {
+              select: {
+                id_usuario: true,
+                email: true,
+                nombre: true,
+                rol: true,
+                estado: true,
+              },
+            },
+          },
+        },
+        periodo: true,
+      },
+    });
   }
-  async cambiarestado(id:number, dto:CambiarEstadoObligacionDto){
-    const obligacion = await this.findOne(id)
-    if(obligacion.estado === dto.estado){
-        throw new BadRequestException(`la obligacion ya esta en ese estado`)
+  async cambiarestado(id: number, dto: CambiarEstadoObligacionDto) {
+    const obligacion = await this.findOne(id);
+    if (obligacion.estado === dto.estado) {
+      throw new BadRequestException(`la obligacion ya esta en ese estado`);
     }
     return this.prisma.obligacionFinanciera.update({
-        where:{id_obligacion:id},
-        data:{estado:dto.estado},
-        include:{
-            estudiante:{
-                include:{
-                    usuario:true
-                }
-            },periodo:true
-        }
-    })
+      where: { id_obligacion: id },
+      data: { estado: dto.estado },
+      include: {
+        estudiante: {
+          include: {
+            usuario: true,
+          },
+        },
+        periodo: true,
+      },
+    });
   }
   async marcarVencidas() {
-  const resultado = await this.prisma.obligacionFinanciera.updateMany({
-    where: {
-      estado: EstadoDeuda.PENDIENTE,
-      fecha_vencimiento: { lt: new Date() },
-    },
-    data: { estado: EstadoDeuda.VENCIDO },
-  });
+    const resultado = await this.prisma.obligacionFinanciera.updateMany({
+      where: {
+        estado: EstadoDeuda.PENDIENTE,
+        fecha_vencimiento: { lt: new Date() },
+      },
+      data: { estado: EstadoDeuda.VENCIDO },
+    });
 
-  return {
-    message: `${resultado.count} obligaciones marcadas como VENCIDAS`,
-    count: resultado.count,
-  };
-}
-
-async suspenderMorosos() {
-  const obligacionesVencidas = await this.prisma.obligacionFinanciera.findMany({
-    where: { estado: EstadoDeuda.VENCIDO },
-    select: { estudiante_id: true },
-    distinct: ['estudiante_id'],
-  });
-
-  const ids = obligacionesVencidas.map((o) => o.estudiante_id);
-
-  if (ids.length === 0) {
-    return { message: 'No hay estudiantes morosos', count: 0 };
+    return {
+      message: `${resultado.count} obligaciones marcadas como VENCIDAS`,
+      count: resultado.count,
+    };
   }
 
-  const resultado = await this.prisma.usuario.updateMany({
-    where: {
-      id_usuario: { in: ids },
-      rol: Role.ESTUDIANTE,
-      estado: EstadoUsuario.ACTIVO,
-    },
-    data: { estado: EstadoUsuario.SUSPENDIDO_MORA },
-  });
+  async suspenderMorosos() {
+    const obligacionesVencidas =
+      await this.prisma.obligacionFinanciera.findMany({
+        where: { estado: EstadoDeuda.VENCIDO },
+        select: { estudiante_id: true },
+        distinct: ['estudiante_id'],
+      });
 
-  return {
-    message: `${resultado.count} estudiantes suspendidos por mora`,
-    count: resultado.count,
-  };
-}
+    const ids = obligacionesVencidas.map((o) => o.estudiante_id);
+
+    if (ids.length === 0) {
+      return { message: 'No hay estudiantes morosos', count: 0 };
+    }
+
+    const resultado = await this.prisma.usuario.updateMany({
+      where: {
+        id_usuario: { in: ids },
+        rol: Role.ESTUDIANTE,
+        estado: EstadoUsuario.ACTIVO,
+      },
+      data: { estado: EstadoUsuario.SUSPENDIDO_MORA },
+    });
+
+    return {
+      message: `${resultado.count} estudiantes suspendidos por mora`,
+      count: resultado.count,
+    };
+  }
 }
