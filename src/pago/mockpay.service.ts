@@ -41,6 +41,7 @@ export class MockpayService {
       this.config.get<string>('MOCKPAY_SECRET_KEY') ||
       'sk_sandbox_fdca488d5f25b3c63285ee5f';
     const apiUrl = 'https://api-mock-payment.funvaltech.cloud/api/v1/payments';
+    const baseUrl = 'https://institucionedu.onrender.com';
     const externalRef = `OBL-${obligacion_id}`;
     try {
       const response = await fetch(apiUrl, {
@@ -52,6 +53,9 @@ export class MockpayService {
         body: JSON.stringify({
           amount: Number(obligacion.monto),
           currency: 'USD',
+          webhook_url: `${baseUrl}/pagos/mockpay/webhook`,
+          success_url: `${baseUrl}/pagos/mockpay/exito`,
+          cancel_url: `${baseUrl}/pagos/mockpay/fallo`,
           metadata: {
             external_reference: externalRef,
             obligacion_id: obligacion_id,
