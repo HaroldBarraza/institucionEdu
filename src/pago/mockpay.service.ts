@@ -1,135 +1,101 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { EstadoDeuda, EstadoPago } from '../generated/prisma/enums.js';
-import { number, string } from 'joi';
+
 @Injectable()
 export class MockpayService {
   private readonly logger = new Logger('MockPay');
+  
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
   ) {}
-  async crearCheckout(obligacion_id: number) {
+
+  async crearCheckout(obligacion_id: number, baseUrl: string) {
     const obligacion = await this.prisma.obligacionFinanciera.findUnique({
-      where: {
-        id_obligacion: obligacion_id,
-      },
-      include: {
-        estudiante: {
-          include: {
-            usuario: true,
-          },
-        },
-      },
+      where: { id_obligacion: obligacion_id },
     });
+
     if (!obligacion) {
-      throw new NotFoundException(`laobligacion id ${obligacion_id} no existe`);
+      throw new NotFoundException(`La obligacion con id ${obligacion_id} no existe`);
     }
     if (obligacion.estado === EstadoDeuda.PAGADO) {
-      throw new BadRequestException(`La obligacion ya esta pagada`);
+      throw new BadRequestException('La obligacion ya esta pagada');
     }
     if (obligacion.estado === EstadoDeuda.CANCELADA) {
-      throw new BadRequestException(`la obligacion esta cancelada`);
+      throw new BadRequestException('La obligacion esta cancelada');
     }
-    const secretKey =
-      this.config.get<string>('MOCKPAY_SECRET_KEY') ||
-      'sk_sandbox_fdca488d5f25b3c63285ee5f';
-    const apiUrl = 'https://api-mock-payment.funvaltech.cloud/api/v1/payments';
-    const baseUrl = 'https://institucionedu.onrender.com';
-    const externalRef = `OBL-${obligacion_id}`;
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${secretKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: Number(obligacion.monto),
-          currency: 'USD',
-          webhook_url: `${baseUrl}/pagos/mockpay/webhook`,
-          success_url: `${baseUrl}/pagos/mockpay/exito`,
-          cancel_url: `${baseUrl}/pagos/mockpay/fallo`,
-          metadata: {
-            external_reference: externalRef,
-            obligacion_id: obligacion_id,
-            email: obligacion.estudiante.usuario.email,
-          },
-        }),
-      });
-      if (!response.ok) {
-        const errText = await response.text();
-        this.logger.error(`Error en API MockPay: ${errText}`);
-        throw new BadRequestException('Error al comunicar con pasarela');
-      }
-      const data = await response.json();
-      this.logger.log(
-        `Checkout MockPay creado para obligacion #${obligacion_id} -> Transacción ID: ${data.id}`,
-      );
-      this.logger.log(`Respuesta cruda de MockPay: ${JSON.stringify(data)}`);
-      const paymentId = data.id_transaccion;
 
-      this.logger.log(
-        `Checkout MockPay creado para obligacion #${obligacion_id} -> Transacción ID: ${paymentId}`,
+    try {
+      const response = await fetch(
+        'https://api-mock-payment.funvaltech.cloud/api/v1/payments',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.config.getOrThrow<string>('WEBHOOK_SECRET')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: Number(obligacion.monto),
+            currency: 'PEN',
+            metadata: {
+              obligacion_id: obligacion.id_obligacion,
+            },
+            webhook_url: `${baseUrl}/pagos/mockpay/webhook` 
+          }),
+        },
       );
-      
+
+      if (!response.ok) {
+        throw new Error('Error al conectar con la pasarela MockPay');
+      }
+
+      const data = await response.json();
+      this.logger.log(`Checkout creado para obligacion #${obligacion_id}`);
+
       return {
-        payment_id: data.id,
         checkout_url: data.checkout_url,
-        init_point: data.checkout_url,
       };
-    } catch (err: any) {
-      this.logger.error(`Error crean el pago ${err.message}`);
-      throw new BadRequestException(
-        `Error al generar el checkout: ${err.message}`,
-      );
+
+    } catch (error:any) {
+      this.logger.error(`Error creando checkout: ${error.message}`);
+      throw new BadRequestException('No se pudo generar el link de pago');
     }
   }
+
   async procesarWebhook(body: any) {
-    const { event, id, status, metadata } = body;
+    const { id, amount, status, metadata, failure_reason } = body;
 
-    const externalRef = metadata?.external_reference || metadata?.order_id;
-    const obligacion_id =
-      metadata?.obligacion_id ||
-      (externalRef ? Number(externalRef.replace('OBL-', '')) : null);
-
-    if (!obligacion_id) {
-      throw new BadRequestException('Webhook sin obligacion_id en metadata');
+    if (!metadata || !metadata.obligacion_id) {
+      throw new BadRequestException('Webhook sin metadata o sin obligacion_id');
     }
 
+    const obligacion_id = Number(metadata.obligacion_id);
+
     const registrado = await this.prisma.pago.findFirst({
-      where: { referencia_pasarela: String(id) },
+      where: {
+        referencia_pasarela: String(id),
+      },
     });
 
     if (registrado) {
-      this.logger.log(`Pago MockPay ${id} ya registrado previamente`);
-      return { recibido: true, mensaje: 'Pago ya registrado' };
+      this.logger.log(`Pago MockPay ${id} ya registrado`);
+      return { recibido: true, mensaje: "Pago ya registrado" };
     }
 
-    const obligacion = await this.prisma.obligacionFinanciera.findUnique({
-      where: { id_obligacion: Number(obligacion_id) },
-    });
+    const estadoMapeado = status === 'SUCCEEDED' ? EstadoPago.ACEPTADO : EstadoPago.RECHAZADO;
 
-    if (!obligacion) {
-      throw new NotFoundException(`Obligación #${obligacion_id} no encontrada`);
+    if (status !== 'SUCCEEDED') {
+      this.logger.warn(`El pago ${id} fue rechazado. Razón: ${failure_reason}`);
     }
-    const esExitoso = status === 'SUCCEEDED' || event === 'payment.succeeded';
-    const estadoMapeado = esExitoso
-      ? EstadoPago.ACEPTADO
-      : EstadoPago.RECHAZADO;
 
     const resultado = await this.prisma.$transaction(async (tx) => {
       const pagoCreado = await tx.pago.create({
         data: {
-          obligacion_id: Number(obligacion_id),
-          monto: body.amount ? Number(body.amount) : Number(obligacion.monto),
-          metodo: 'PASARELA_EN_LINEA',
+          obligacion_id: obligacion_id,
+          monto: Number(amount),
+          metodo: "PASARELA_EN_LINEA",
           estado: estadoMapeado,
           referencia_pasarela: String(id),
           fecha_verificacion: new Date(),
@@ -138,7 +104,7 @@ export class MockpayService {
 
       if (estadoMapeado === EstadoPago.ACEPTADO) {
         await tx.obligacionFinanciera.update({
-          where: { id_obligacion: Number(obligacion_id) },
+          where: { id_obligacion: obligacion_id },
           data: { estado: EstadoDeuda.PAGADO },
         });
       }
@@ -146,10 +112,8 @@ export class MockpayService {
       return pagoCreado;
     });
 
-    this.logger.log(
-      `Pago MockPay ID: ${id} procesado -> Estado: ${estadoMapeado}`,
-    );
-
+    this.logger.log(`Pago MockPay ${id} procesado -> ${estadoMapeado}`);
+    
     return {
       recibido: true,
       estado: estadoMapeado,

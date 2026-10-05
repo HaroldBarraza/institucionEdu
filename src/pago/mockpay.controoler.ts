@@ -6,13 +6,10 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiExcludeEndpoint,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import type{ Request } from 'express';
 import { MockpayService } from './mockpay.service.js';
 import { CrearPreferenciaDto } from './dto/crear-preferencia.dto.js';
 import { Public } from '../auth/decorators/public.decorators.js';
@@ -22,52 +19,44 @@ import { Public } from '../auth/decorators/public.decorators.js';
 @Controller('pagos/mockpay')
 export class MockPayController {
   constructor(private readonly mockPayService: MockpayService) {}
+
   @Post('checkout')
   @Public()
-  @ApiOperation({ summary: 'crea un pago de mockpay' })
-  crearCheckout(@Body() dto: CrearPreferenciaDto) {
-    return this.mockPayService.crearCheckout(dto.obligacion_id);
+  @ApiOperation({ summary: 'Crea un checkout de MockPay' })
+  crearCheckout(@Body() dto: CrearPreferenciaDto, @Req() req: Request) {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    return this.mockPayService.crearCheckout(dto.obligacion_id, baseUrl);
   }
-  @ApiExcludeEndpoint()
-  @Public()
+
   @Post('webhook')
+  @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Webhook de notificaciones de MockPay (S2S)' })
+  @ApiOperation({ summary: 'Webhook de notificaciones de MockPay' })
   webhook(@Body() body: any) {
-    if (!body || (!body.id && !body.status)) {
-      throw new BadRequestException('Payload de webhook inválido');
-    }
     return this.mockPayService.procesarWebhook(body);
   }
 
-  @ApiExcludeEndpoint()
-  @Public()
   @Get('exito')
+  @Public()
   exito() {
-    return {
-      mensaje:
-        'Pago procesado exitosamente. La actualización dependerá de la confirmación del webhook.',
-    };
+    return { mensaje: 'Pago procesado exitosamente.' };
   }
 
-  @ApiExcludeEndpoint()
-  @Public()
   @Get('fallo')
+  @Public()
   fallo() {
     return { mensaje: 'El pago ha fallado o fue cancelado.' };
   }
-  @Public()
-  @Post('webhook') // <-- Escuchará exactamente en POST /webhook
-  @HttpCode(HttpStatus.OK)
-  webhookInterceptor(@Body() body: any) {
-    // 👇 Agregamos este log para ver cómo viene la data de MockPay
-    console.log('🔔 WEBHOOK RECIBIDO EN LA RAÍZ:', body); 
-    
-    if (!body) {
-      throw new BadRequestException('Payload vacío');
-    }
-    return this.mockPayService.procesarWebhook(body);
-  }
-
 }
 
+@Controller()
+export class GlobalWebhookController {
+  constructor(private readonly mockPayService: MockpayService) {}
+
+  @Post('webhook')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  webhookRaiz(@Body() body: any) {
+    return this.mockPayService.procesarWebhook(body);
+  }
+}
