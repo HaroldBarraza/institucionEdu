@@ -101,7 +101,7 @@ model Tutor {
 }
 
 model Docente {
-  id_docente      Int      @id
+  id_docente      Int      @id 
   especialidad_id Int
   fechaContrato   DateTime
 

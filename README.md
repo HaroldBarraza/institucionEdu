@@ -116,3 +116,4 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 ## DIAGRAMA ENTIDAD RELACION
 https://dbdiagram.io/d/6a73a8e235ee2e87b03fe78e
+  
