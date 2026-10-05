@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { EstadoDeuda, EstadoPago } from '../generated/prisma/enums.js';
@@ -6,7 +11,7 @@ import { EstadoDeuda, EstadoPago } from '../generated/prisma/enums.js';
 @Injectable()
 export class MockpayService {
   private readonly logger = new Logger('MockPay');
-  
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
@@ -18,7 +23,9 @@ export class MockpayService {
     });
 
     if (!obligacion) {
-      throw new NotFoundException(`La obligacion con id ${obligacion_id} no existe`);
+      throw new NotFoundException(
+        `La obligacion con id ${obligacion_id} no existe`,
+      );
     }
     if (obligacion.estado === EstadoDeuda.PAGADO) {
       throw new BadRequestException('La obligacion ya esta pagada');
@@ -28,27 +35,38 @@ export class MockpayService {
     }
 
     try {
-      const response = await fetch(
-        'https://api-mock-payment.funvaltech.cloud/api/v1/payments',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${this.config.getOrThrow<string>('WEBHOOK_SECRET')}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            amount: Number(obligacion.monto),
-            currency: 'PEN',
-            metadata: {
-              obligacion_id: obligacion.id_obligacion,
-            },
-            webhook_url: `${baseUrl}/pagos/mockpay/webhook` 
-          }),
+      // 1. Leemos las variables desde tu .env con respaldo automático
+      const secretKey =
+        this.config.get<string>('MOCKPAY_SECRET_KEY') ||
+        'sk_sandbox_ea45c43f664002308c6d5d51';
+
+      const apiUrl =
+        this.config.get<string>('MOCKPAY_API_URL') ||
+        'https://mockpay-backend.onrender.com/api/v1/payments';
+
+      // 2. Petición a la pasarela de pagos
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${secretKey}`,
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          amount: Number(obligacion.monto),
+          currency: 'USD',
+          webhook_url: `${baseUrl}/webhook`,
+          metadata: {
+            obligacion_id: obligacion.id_obligacion,
+          },
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error('Error al conectar con la pasarela MockPay');
+        const errText = await response.text();
+        this.logger.error(
+          `Error en API MockPay (${response.status}): ${errText}`,
+        );
+        throw new Error('Error al comunicar con la pasarela MockPay');
       }
 
       const data = await response.json();
@@ -57,8 +75,7 @@ export class MockpayService {
       return {
         checkout_url: data.checkout_url,
       };
-
-    } catch (error:any) {
+    } catch (error: any) {
       this.logger.error(`Error creando checkout: ${error.message}`);
       throw new BadRequestException('No se pudo generar el link de pago');
     }
@@ -81,10 +98,11 @@ export class MockpayService {
 
     if (registrado) {
       this.logger.log(`Pago MockPay ${id} ya registrado`);
-      return { recibido: true, mensaje: "Pago ya registrado" };
+      return { recibido: true, mensaje: 'Pago ya registrado' };
     }
 
-    const estadoMapeado = status === 'SUCCEEDED' ? EstadoPago.ACEPTADO : EstadoPago.RECHAZADO;
+    const estadoMapeado =
+      status === 'SUCCEEDED' ? EstadoPago.ACEPTADO : EstadoPago.RECHAZADO;
 
     if (status !== 'SUCCEEDED') {
       this.logger.warn(`El pago ${id} fue rechazado. Razón: ${failure_reason}`);
@@ -95,7 +113,7 @@ export class MockpayService {
         data: {
           obligacion_id: obligacion_id,
           monto: Number(amount),
-          metodo: "PASARELA_EN_LINEA",
+          metodo: 'PASARELA_EN_LINEA',
           estado: estadoMapeado,
           referencia_pasarela: String(id),
           fecha_verificacion: new Date(),
@@ -113,7 +131,7 @@ export class MockpayService {
     });
 
     this.logger.log(`Pago MockPay ${id} procesado -> ${estadoMapeado}`);
-    
+
     return {
       recibido: true,
       estado: estadoMapeado,
