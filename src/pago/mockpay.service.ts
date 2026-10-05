@@ -17,15 +17,13 @@ export class MockpayService {
     private readonly config: ConfigService,
   ) {}
 
-  async crearCheckout(obligacion_id: number, baseUrl: string) {
+  async crearCheckout(obligacion_id: number) {
     const obligacion = await this.prisma.obligacionFinanciera.findUnique({
       where: { id_obligacion: obligacion_id },
     });
 
     if (!obligacion) {
-      throw new NotFoundException(
-        `La obligacion con id ${obligacion_id} no existe`,
-      );
+      throw new NotFoundException(`La obligacion con id ${obligacion_id} no existe`);
     }
     if (obligacion.estado === EstadoDeuda.PAGADO) {
       throw new BadRequestException('La obligacion ya esta pagada');
@@ -35,14 +33,8 @@ export class MockpayService {
     }
 
     try {
-
-      const secretKey =
-        this.config.get<string>('MOCKPAY_SECRET_KEY') ||
-        'sk_sandbox_ea45c43f664002308c6d5d51';
-
-      const apiUrl =
-        this.config.get<string>('MOCKPAY_API_URL') ||
-        'https://mockpay-backend.onrender.com/api/v1/payments';
+      const secretKey = this.config.get<string>('MOCKPAY_SECRET_KEY') || 'sk_sandbox_ea45c43f664002308c6d5d51';
+      const apiUrl = this.config.get<string>('MOCKPAY_API_URL') || 'https://mockpay-backend.onrender.com/api/v1/payments';
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -53,18 +45,15 @@ export class MockpayService {
         body: JSON.stringify({
           amount: Number(obligacion.monto),
           currency: 'USD',
-          webhook_url: `${baseUrl}/pagos/mockpay/webhook`,
           metadata: {
-            obligacion_id: obligacion.id_obligacion,
+            obligacion_id: String(obligacion.id_obligacion), 
           },
         }),
       });
 
       if (!response.ok) {
         const errText = await response.text();
-        this.logger.error(
-          `Error en API MockPay (${response.status}): ${errText}`,
-        );
+        this.logger.error(`Error en API MockPay (${response.status}): ${errText}`);
         throw new Error('Error al comunicar con la pasarela MockPay');
       }
 
@@ -81,13 +70,15 @@ export class MockpayService {
   }
 
   async procesarWebhook(body: any) {
-    const { id, amount, status, metadata, failure_reason } = body;
+    const { id, amount, status, metadata, failure_reason, event } = body;
 
-    if (!metadata || !metadata.obligacion_id) {
-      throw new BadRequestException('Webhook sin metadata o sin obligacion_id');
+    if (!id || !metadata || !metadata.obligacion_id) {
+      this.logger.warn('Webhook recibido con formato inválido o sin metadata');
+      throw new BadRequestException('Webhook sin metadata o id');
     }
 
     const obligacion_id = Number(metadata.obligacion_id);
+
 
     const registrado = await this.prisma.pago.findFirst({
       where: {
@@ -96,15 +87,14 @@ export class MockpayService {
     });
 
     if (registrado) {
-      this.logger.log(`Pago MockPay ${id} ya registrado`);
+      this.logger.log(`Pago MockPay ${id} ya registrado previamente. Ignorando.`);
       return { recibido: true, mensaje: 'Pago ya registrado' };
     }
 
-    const estadoMapeado =
-      status === 'SUCCEEDED' ? EstadoPago.ACEPTADO : EstadoPago.RECHAZADO;
+    const estadoMapeado = status === 'SUCCEEDED' ? EstadoPago.ACEPTADO : EstadoPago.RECHAZADO;
 
     if (status !== 'SUCCEEDED') {
-      this.logger.warn(`El pago ${id} fue rechazado. Razón: ${failure_reason}`);
+      this.logger.warn(`El pago ${id} fue rechazado. Razón: ${failure_reason || 'Desconocida'}`);
     }
 
     const resultado = await this.prisma.$transaction(async (tx) => {
@@ -129,7 +119,7 @@ export class MockpayService {
       return pagoCreado;
     });
 
-    this.logger.log(`Pago MockPay ${id} procesado -> ${estadoMapeado}`);
+    this.logger.log(`Pago MockPay ${id} procesado exitosamente -> ${estadoMapeado}`);
 
     return {
       recibido: true,

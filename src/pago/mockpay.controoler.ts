@@ -1,15 +1,12 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Post,
-  Req,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import type{ Request } from 'express';
 import { MockpayService } from './mockpay.service.js';
 import { CrearPreferenciaDto } from './dto/crear-preferencia.dto.js';
 import { Public } from '../auth/decorators/public.decorators.js';
@@ -23,9 +20,8 @@ export class MockPayController {
   @Post('checkout')
   @Public()
   @ApiOperation({ summary: 'Crea un checkout de MockPay' })
-  crearCheckout(@Body() dto: CrearPreferenciaDto, @Req() req: Request) {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-    return this.mockPayService.crearCheckout(dto.obligacion_id, baseUrl);
+  crearCheckout(@Body() dto: CrearPreferenciaDto) {
+    return this.mockPayService.crearCheckout(dto.obligacion_id);
   }
 
   @Post('webhook')
@@ -39,16 +35,15 @@ export class MockPayController {
   @Get('exito')
   @Public()
   exito() {
-    return { mensaje: 'Pago procesado exitosamente.' };
+    return { mensaje: 'Pago procesado exitosamente. Ya puedes cerrar esta ventana.' };
   }
 
   @Get('fallo')
   @Public()
   fallo() {
-    return { mensaje: 'El pago ha fallado o fue cancelado.' };
+    return { mensaje: 'El pago ha fallado o fue cancelado. Inténtalo nuevamente.' };
   }
 }
-
 @Controller()
 export class GlobalWebhookController {
   constructor(private readonly mockPayService: MockpayService) {}
