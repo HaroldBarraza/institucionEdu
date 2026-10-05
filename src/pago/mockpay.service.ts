@@ -35,7 +35,7 @@ export class MockpayService {
     }
 
     try {
-      // 1. Leemos las variables desde tu .env con respaldo automático
+
       const secretKey =
         this.config.get<string>('MOCKPAY_SECRET_KEY') ||
         'sk_sandbox_ea45c43f664002308c6d5d51';
@@ -44,7 +44,6 @@ export class MockpayService {
         this.config.get<string>('MOCKPAY_API_URL') ||
         'https://mockpay-backend.onrender.com/api/v1/payments';
 
-      // 2. Petición a la pasarela de pagos
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -54,7 +53,7 @@ export class MockpayService {
         body: JSON.stringify({
           amount: Number(obligacion.monto),
           currency: 'USD',
-          webhook_url: `${baseUrl}/webhook`,
+          webhook_url: `${baseUrl}/pagos/mockpay/webhook`,
           metadata: {
             obligacion_id: obligacion.id_obligacion,
           },
