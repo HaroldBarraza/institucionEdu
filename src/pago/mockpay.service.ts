@@ -40,7 +40,7 @@ export class MockpayService {
     const secretKey =
       this.config.get<string>('MOCKPAY_SECRET_KEY') ||
       'sk_sandbox_fdca488d5f25b3c63285ee5f';
-    const apiUrl = 'https://mockpay-backend.onrender.com/api/v1/payments';
+    const apiUrl = 'https://api-mock-payment.funvaltech.cloud/api/v1/payments';
     const externalRef = `OBL-${obligacion_id}`;
     try {
       const response = await fetch(apiUrl, {
