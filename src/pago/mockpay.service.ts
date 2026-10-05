@@ -72,6 +72,13 @@ export class MockpayService {
       this.logger.log(
         `Checkout MockPay creado para obligacion #${obligacion_id} -> Transacción ID: ${data.id}`,
       );
+      this.logger.log(`Respuesta cruda de MockPay: ${JSON.stringify(data)}`);
+      const paymentId = data.id || data.payment_id || data.uuid || 'Generado';
+
+      this.logger.log(
+        `Checkout MockPay creado para obligacion #${obligacion_id} -> Transacción ID: ${paymentId}`,
+      );
+      
       return {
         payment_id: data.id,
         checkout_url: data.checkout_url,
