@@ -56,4 +56,18 @@ export class MockPayController {
   fallo() {
     return { mensaje: 'El pago ha fallado o fue cancelado.' };
   }
+  @Public()
+  @Post('webhook') // <-- Escuchará exactamente en POST /webhook
+  @HttpCode(HttpStatus.OK)
+  webhookInterceptor(@Body() body: any) {
+    // 👇 Agregamos este log para ver cómo viene la data de MockPay
+    console.log('🔔 WEBHOOK RECIBIDO EN LA RAÍZ:', body); 
+    
+    if (!body) {
+      throw new BadRequestException('Payload vacío');
+    }
+    return this.mockPayService.procesarWebhook(body);
+  }
+
 }
+
