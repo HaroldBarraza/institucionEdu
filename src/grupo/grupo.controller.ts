@@ -17,7 +17,7 @@ import { Role } from '../generated/prisma/enums.js';
 @ApiTags('grupos')
 @ApiBearerAuth()
 @Controller('grupo')
-@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA,Role.ESTUDIANTE)
 export class GrupoController {
   constructor(private readonly grupoService: GrupoService) {}
   @ApiOperation({summary: "optiene la lista de grupos"})
@@ -31,11 +31,13 @@ export class GrupoController {
     return this.grupoService.findOne(+id);
   }
   @ApiOperation({summary: "crea un nuevo grupo"})
+  @Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
   @Post()
   create(@Body() dto: CreateGrupoDto) {
     return this.grupoService.create(dto);
   }
   @ApiOperation({summary: "actualiza la informacion de un grupo"})
+  @Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
   @Patch(":id")
   update(@Param('id') id: string, @Body() dto: UpdateGrupoDto) {
     return this.grupoService.update(+id, dto);

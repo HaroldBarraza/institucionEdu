@@ -18,7 +18,7 @@ import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
 @ApiBearerAuth()
 @ApiTags('2.4 Asignacion')
-@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA, Role.PROFESOR)
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA, Role.PROFESOR, Role.ESTUDIANTE)
 @Controller('asignacion')
 export class AsignacionController {
   constructor(private readonly asignacionService: AsignacionService) {}
