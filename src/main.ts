@@ -8,14 +8,17 @@ import { LoggingInterceptor } from './common/logging.interceptor.js';
 import { PrismaExceptionFilter } from './prisma/prisma-exception.filter.js';
 import { AllExceptionsFilter } from './common/all-exceptions.filter.js';
 
-
-
-
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     instrument: ObserveInstrument,
   });
+  const configService = app.get(ConfigService);
   app.useGlobalInterceptors(new LoggingInterceptor());
+  app.enableCors({
+    origin: configService.get<string[]>('corsOrigin'),
+    credentials: true,
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -35,13 +38,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/doc', app, document, {
-    swaggerOptions:{
+    swaggerOptions: {
       operationsSorter: 'method',
-      tagsSorter:'alpha'
-    }
+      tagsSorter: 'alpha',
+    },
   });
 
-  const configService = app.get(ConfigService);
   await app.listen(configService.get<number>('PORT')!);
 }
 await bootstrap();

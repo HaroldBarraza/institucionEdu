@@ -21,21 +21,26 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const message =
+    const rawBody =
       exception instanceof HttpException
         ? exception.getResponse()
         : exception instanceof Error
           ? exception.message
           : 'Error interno del servidor';
 
+    const body =
+      typeof rawBody === 'object' && rawBody !== null
+        ? rawBody
+        : { message: rawBody };
+
     this.logger.error(
-      `Status ${status}: ${JSON.stringify(message)}`,
+      `Status ${status}: ${JSON.stringify(body)}`,
       exception instanceof Error ? exception.stack : '',
     );
 
     response.status(status).json({
       statusCode: status,
-      message,
+      ...body,
       timestamp: new Date().toISOString(),
     });
   }

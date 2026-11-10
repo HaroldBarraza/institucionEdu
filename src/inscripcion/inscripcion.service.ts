@@ -14,6 +14,26 @@ import { CreateInscripcionDto } from './dto/create-inscripcion.dto.js';
 import { UpdateEstadoInscripcionDto } from './dto/update-estado-inscripcion.dto.js';
 import { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 
+//para qyue no sea repetitivo en el front
+export const MotivoRechazoMatricula = {
+  GRUPO_NO_EXISTE: 'GRUPO_NO_EXISTE',
+  GRUPO_CERRADO: 'GRUPO_CERRADO',
+  PERIODO_NO_ACTIVO: 'PERIODO_NO_ACTIVO',
+  ESTUDIANTE_NO_EXISTE: 'ESTUDIANTE_NO_EXISTE',
+  ESTUDIANTE_NO_ACTIVO: 'ESTUDIANTE_NO_ACTIVO',
+  GRUPO_LLENO: 'GRUPO_LLENO',
+  MATERIA_YA_CURSADA: 'MATERIA_YA_CURSADA',
+  LIMITE_CREDITOS: 'LIMITE_CREDITOS',
+  TRASLAPE_HORARIO: 'TRASLAPE_HORARIO',
+} as const;
+
+export type MotivoRechazoMatricula =
+  (typeof MotivoRechazoMatricula)[keyof typeof MotivoRechazoMatricula];
+
+function rechazo(code: MotivoRechazoMatricula, message: string) {
+  return new BadRequestException({ message, code });
+}
+
 @Injectable()
 export class InscripcionService {
   constructor(private readonly prisma: PrismaService) {}
@@ -68,71 +88,90 @@ export class InscripcionService {
     }
     return result;
   }
-  async create(dto: CreateInscripcionDto, user:JwtPayload) {
+  async create(dto: CreateInscripcionDto, user: JwtPayload) {
     const grupo = await this.prisma.grupo.findUnique({
-        where:{id_grupo: dto.grupo_id},
-        include:{
-            periodo:true,
-            horarios:true,
-            materia:true,
-        }    
-    })
-    if(!grupo){
-        throw new BadRequestException(`el grupo con id ${dto.grupo_id} no existe`)
+      where: { id_grupo: dto.grupo_id },
+      include: {
+        periodo: true,
+        horarios: true,
+        materia: true,
+      },
+    });
+    if (!grupo) {
+      throw rechazo(
+        'GRUPO_NO_EXISTE',
+        `el grupo con id ${dto.grupo_id} no existe`,
+      );
     }
-    if(grupo.estado !== EstadoGrupo.ABIERTO){
-        throw new BadRequestException(`el grupo no esta abierto el estado actiual es de ${grupo.estado}`)
+    if (grupo.estado !== EstadoGrupo.ABIERTO) {
+      throw rechazo(
+        'GRUPO_CERRADO',
+        `el grupo no esta abierto el estado actual es de ${grupo.estado}`,
+      );
     }
-    if(grupo.periodo.estado !== EstadoPeriodo.ACTIVO){
-        throw new BadRequestException(`el periodo ${grupo.periodo.nombre} no esta activo`)
+    if (grupo.periodo.estado !== EstadoPeriodo.ACTIVO) {
+      throw rechazo(
+        'PERIODO_NO_ACTIVO',
+        `el periodo ${grupo.periodo.nombre} no esta activo`,
+      );
     }
     const estudiante = await this.prisma.estudiante.findUnique({
-        where:{id_estudiante: user.sub},
-        include:{
-            usuario:true
-        }
-    })
-    if(!estudiante){
-        throw new BadRequestException(`estudiante ${user.sub} no exite`)
+      where: { id_estudiante: user.sub },
+      include: {
+        usuario: true,
+      },
+    });
+    if (!estudiante) {
+      throw rechazo('ESTUDIANTE_NO_EXISTE', `estudiante ${user.sub} no existe`);
     }
-    if(estudiante.usuario.estado !== EstadoUsuario.ACTIVO){
-        throw new BadRequestException(`el estudiante no esta activo estado:${estudiante.usuario.estado}`)
+    if (estudiante.usuario.estado !== EstadoUsuario.ACTIVO) {
+      throw rechazo(
+        'ESTUDIANTE_NO_ACTIVO',
+        `el estudiante no esta activo estado:${estudiante.usuario.estado}`,
+      );
     }
-    await this.validarcupos(grupo.id_grupo, grupo.cupo_maximo)
+    await this.validarcupos(grupo.id_grupo, grupo.cupo_maximo);
     const inscripcionesActivas = await this.prisma.inscripcion.findMany({
-        where:{
-            estudiante_id:user.sub,
-            estado: EstadoInscripcion.INSCRITO,
-            grupo:{periodo_id:grupo.periodo_id}
+      where: {
+        estudiante_id: user.sub,
+        estado: EstadoInscripcion.INSCRITO,
+        grupo: { periodo_id: grupo.periodo_id },
+      },
+      include: {
+        grupo: {
+          include: {
+            materia: true,
+            horarios: true,
+          },
         },
-        include:{
-            grupo:{
-                include:{
-                    materia:true,
-                    horarios:true
-                }
-            }
-        }
-    })
+      },
+    });
     this.validarMateria(inscripcionesActivas, grupo.materia_id);
-    this.ValidarCreditos(inscripcionesActivas, grupo.materia.creditos, grupo.periodo.limite_creditos);
+    this.ValidarCreditos(
+      inscripcionesActivas,
+      grupo.materia.creditos,
+      grupo.periodo.limite_creditos,
+    );
     this.validarTraslape(inscripcionesActivas, grupo.horarios);
     return this.prisma.inscripcion.create({
-        data:{
-            estudiante_id:user.sub,
-            grupo_id:dto.grupo_id
+      data: {
+        estudiante_id: user.sub,
+        grupo_id: dto.grupo_id,
+      },
+      include: {
+        grupo: {
+          include: {
+            materia: true,
+            periodo: true,
+          },
         },
-        include:{
-            grupo:{
-                include:{
-                    materia:true,periodo:true
-                }
-            },
-            estudiante:{include:{
-                usuario:true
-            }}
-        }
-    })
+        estudiante: {
+          include: {
+            usuario: true,
+          },
+        },
+      },
+    });
   }
   async update(id: number, dto: UpdateEstadoInscripcionDto) {
     const inscripcion = await this.findOne(id);
@@ -167,7 +206,7 @@ export class InscripcionService {
       },
     });
     if (inscritos >= cupo_maximo) {
-      throw new BadRequestException(`El grupo esta lleno`);
+      throw rechazo('GRUPO_LLENO', `El grupo esta lleno`);
     }
   }
   private validarMateria(
@@ -178,7 +217,8 @@ export class InscripcionService {
       (i) => i.grupo.materia_id === materia_id,
     );
     if (yaInscrito) {
-      throw new BadRequestException(
+      throw rechazo(
+        'MATERIA_YA_CURSADA',
         `El estudiante ya esta inscrito en la misma materia en el mismo periodo`,
       );
     }
@@ -193,7 +233,8 @@ export class InscripcionService {
       0,
     );
     if (creditosActuales + creditosNuevos > limite) {
-      throw new BadRequestException(
+      throw rechazo(
+        'LIMITE_CREDITOS',
         `Supera el límite de créditos del periodo (${limite}). Actual: ${creditosActuales}, intentando sumar: ${creditosNuevos}`,
       );
     }
@@ -224,7 +265,8 @@ export class InscripcionService {
             nuevo.hora_inicio < actual.hora_fin;
 
           if (solapan) {
-            throw new BadRequestException(
+            throw rechazo(
+              'TRASLAPE_HORARIO',
               `Traslape de horario el ${nuevo.dia_semana} entre ${nuevo.hora_inicio.toISOString().slice(11, 16)} y ${nuevo.hora_fin.toISOString().slice(11, 16)}`,
             );
           }
