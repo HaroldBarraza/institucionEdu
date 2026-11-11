@@ -19,6 +19,8 @@ async function bootstrap(): Promise<void> {
       'http://localhost:5173',      
       'http://localhost:4173',      
       'https://tu-front.vercel.app', 
+      'https://edufront-pqh6i88fk-harolds-projects-a73372ca.vercel.app',
+      
     ],
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
