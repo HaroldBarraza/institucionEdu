@@ -17,7 +17,7 @@ import { Role } from '../generated/prisma/enums.js';
 @ApiTags('grupos')
 @ApiBearerAuth()
 @Controller('grupo')
-@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA,Role.ESTUDIANTE)
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA,Role.ESTUDIANTE, Role.PROFESOR)
 export class GrupoController {
   constructor(private readonly grupoService: GrupoService) {}
   @ApiOperation({summary: "optiene la lista de grupos"})

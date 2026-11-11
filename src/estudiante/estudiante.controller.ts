@@ -13,7 +13,7 @@ import { UpdateEstudianteDto } from './dto/update-estudiante.dto.js';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator.js';
 import { Role } from '../generated/prisma/enums.js';
-import { CurrentUser} from '../auth/decorators/current-user.decorator.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 import { CambiarEstadoDto } from './dto/update-estado.dto.js';
 import { ForbiddenException } from '@nestjs/common';
@@ -23,38 +23,40 @@ import { ForbiddenException } from '@nestjs/common';
 @Controller('estudiante')
 @Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA, Role.ESTUDIANTE)
 export class EstudianteController {
-    constructor(private readonly estudianteService:EstudianteService){}
-    @ApiOperation({summary: "obtiene la lista de todos los estudiantes"})
-    @Get()
-    findAll(){
-        return this.estudianteService.findAll()
-    }
-    @ApiOperation({summary: "obtiene la informacion de "})
-    @Get(":id")
-    findOne(@Param("id") id:string){
-        return this.estudianteService.finOne(+id)
-    }
-/*     @ApiOperation({summary: "se crea un nuevo estudiante"})
+  constructor(private readonly estudianteService: EstudianteService) {}
+  @ApiOperation({ summary: 'obtiene la lista de todos los estudiantes' })
+  @Get()
+  findAll() {
+    return this.estudianteService.findAll();
+  }
+  @ApiOperation({ summary: 'obtiene la informacion de ' })
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.estudianteService.finOne(+id);
+  }
+  /*     @ApiOperation({summary: "se crea un nuevo estudiante"})
     @Post()
     create(@Body() dto:CreateEstudianteDto){
         return this.estudianteService.create(dto)
     } */
-    @ApiOperation({summary: "actulizar informaicon de un id "})
-    @Patch(":id")
-    update(@Param("id") id:string, @Body() dto:UpdateEstudianteDto){
-        return this.estudianteService.update(dto,+id)
-    }
-    @ApiOperation({summary: "se obtiene la informaicon financiera de un alumno"})
-    @Get(":id/me")
-    getdeudas(@Param("id") id:string,@CurrentUser() user: JwtPayload,){
-            if (user.rol === Role.ESTUDIANTE && user.sub !== +id) {
+  @ApiOperation({ summary: 'actulizar informaicon de un id ' })
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateEstudianteDto) {
+    return this.estudianteService.update(dto, +id);
+  }
+  @ApiOperation({
+    summary: 'se obtiene la informaicon financiera de un alumno',
+  })
+  @Get(':id/me')
+  getdeudas(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    if (user.rol === Role.ESTUDIANTE && user.sub !== +id) {
       throw new ForbiddenException('Solo puedes ver tu propio historial');
     }
     return this.estudianteService.gethistorial(+id);
-    }
-    @ApiOperation({summary: "se cambia el estado del estudiante"})
-    @Patch(":id/mora")
-    cambiarmora(@Param("id") id: string, @Body() dto: CambiarEstadoDto){
-        return this.estudianteService.cambiarEstadoEstudiante(+id, dto.estado)
-    }
+  }
+  @ApiOperation({ summary: 'se cambia el estado del estudiante' })
+  @Patch(':id/mora')
+  cambiarmora(@Param('id') id: string, @Body() dto: CambiarEstadoDto) {
+    return this.estudianteService.cambiarEstadoEstudiante(+id, dto.estado);
+  }
 }

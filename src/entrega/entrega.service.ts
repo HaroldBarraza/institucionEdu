@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ForbiddenException
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateEntregaDto } from './dto/create-entrega.dto.js';
@@ -180,7 +181,7 @@ export class EntregaService {
     if (entrega.calificacion !== null) {
       throw new BadRequestException(`la entrega ya esta calificada`);
     }
-    if(entrega.asignacion.grupo.docente_id === user.sub ){
+    if(entrega.asignacion.grupo.docente_id !== user.sub ){
       throw new NotFoundException(`solo puede calificar entregas a las que este asignado`)
     }
     return this.prisma.entrega.update({
