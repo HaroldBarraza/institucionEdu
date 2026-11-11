@@ -16,11 +16,12 @@ import { Role } from '../generated/prisma/enums.js';
 import { CurrentUser} from '../auth/decorators/current-user.decorator.js';
 import type { JwtPayload } from '../auth/decorators/current-user.decorator.js';
 import { CambiarEstadoDto } from './dto/update-estado.dto.js';
+import { ForbiddenException } from '@nestjs/common';
 
 @ApiTags('estudiantes')
 @ApiBearerAuth()
 @Controller('estudiante')
-@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA)
+@Roles(Role.ADMINISTRADOR, Role.RECEPCIONISTA, Role.ESTUDIANTE)
 export class EstudianteController {
     constructor(private readonly estudianteService:EstudianteService){}
     @ApiOperation({summary: "obtiene la lista de todos los estudiantes"})
@@ -45,8 +46,11 @@ export class EstudianteController {
     }
     @ApiOperation({summary: "se obtiene la informaicon financiera de un alumno"})
     @Get(":id/me")
-    getdeudas(@Param("id") id:string){
-        return this.estudianteService.gethistorial(+id)
+    getdeudas(@Param("id") id:string,@CurrentUser() user: JwtPayload,){
+            if (user.rol === Role.ESTUDIANTE && user.sub !== +id) {
+      throw new ForbiddenException('Solo puedes ver tu propio historial');
+    }
+    return this.estudianteService.gethistorial(+id);
     }
     @ApiOperation({summary: "se cambia el estado del estudiante"})
     @Patch(":id/mora")
