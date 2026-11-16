@@ -20,6 +20,7 @@ async function bootstrap(): Promise<void> {
       'http://localhost:4173',      
       'https://tu-front.vercel.app', 
       'https://edufront-pqh6i88fk-harolds-projects-a73372ca.vercel.app',
+      'https://edufront-m9qrr99nh-harolds-projects-a73372ca.vercel.app/login',
       
     ],
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
